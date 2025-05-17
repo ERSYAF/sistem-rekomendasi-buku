@@ -260,6 +260,7 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Setelah menghapus nilai kosong di kolom Age, dataset Users memiliki 168.096 entri. Setelah proses pembersihan outlier dengan menyaring usia antara 5 hingga 100 tahun, jumlah data berkurang menjadi 166.848 entri dengan 3 kolom.
 
+
 ---
 
 ### 3.  Penyaringan (Filtering) Data Ratings
@@ -271,6 +272,7 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 - Pada tahap ini, kami memfilter dataset Ratings dengan menghapus semua data yang memiliki nilai rating 0. Rating 0 menunjukkan bahwa pengguna tidak secara aktif memberikan penilaian terhadap buku tersebut, sehingga data ini tidak memberikan informasi preferensi yang berarti untuk sistem rekomendasi.
 
 **Hasil**: Dataset Ratings awalnya memiliki 1.149.780 entri. Setelah menghapus data dengan nilai rating 0, jumlah entri berkurang menjadi 433.671 entri dengan 3 kolom.
+
 
 ---
 
@@ -496,7 +498,7 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 
 
 #### 3. Menghitung *Cosine Similarity* Antar Pengguna
-
+---
 
 **Proses Perhitungan Kemiripan Antar Pengguna**
 
@@ -519,6 +521,7 @@ Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berd
 ---
 
 #### 4. Rekomendasi Berdasarkan Judul Buku
+---
 
 Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan *Top-N* buku yang memiliki kemiripan tinggi berdasarkan judul buku.
 
