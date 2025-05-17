@@ -180,6 +180,8 @@ Tidak ditemukan data duplikat, sehingga tidak diperlukan tindakan pembersihan un
 
 ## Exploratory Data Analysis (EDA)
 
+1. **10 Buku Rating Terbanyak**
+
 Berikut adalah tabel yang merangkum 10 buku dengan jumlah rating terbanyak di dataset:
 
 | No | ISBN       | Judul Buku                                        | Jumlah Rating |
@@ -195,7 +197,7 @@ Berikut adalah tabel yang merangkum 10 buku dengan jumlah rating terbanyak di da
 | 9  | 067976402X | *Snow Falling on Cedars*                          | 614           |
 | 10 | 0671027360 | *Angels & Demons*                                 | 586           |
 
-Berikut Visualisasi 10 Buku Rating Terbanyak
+
 ![10 Buku Rating Terbanyak](gambar/Buku%20Rating%20Terbanyak.png)
 
 
@@ -204,30 +206,26 @@ Berikut Visualisasi 10 Buku Rating Terbanyak
 - Buku Wild Animus jauh lebih sering dirating dibandingkan buku lain, kemungkinan besar karena faktor popularitas atau faktor marketing tertentu.
 - Terdapat ISBN yang tidak memiliki `Book-Title` (NaN), perlu perhatian lebih dalam tahap berikutnya.
 
-**Distribusi Nilai Rating**
+2. **Distribusi Nilai Rating**
 
 Distribusi nilai rating menunjukkan bahwa sebagian besar rating yang diberikan adalah 0.
 Rating tinggi seperti 8–10 juga cukup banyak, menunjukkan adanya bias positif pengguna terhadap buku favorit mereka.
 
-![Distribusi Nilai Rating Buku](image/Distribusi%20Nilai%20Rating%20Buku.png)
+![Distribusi Nilai Rating Buku](gambar/Distribusi%20Nilai%20Rating%20Buku.png)
 
 **Insight**:
-Insight:
+- Dominasi rating 0 mengisyaratkan adanya banyak data yang bersifat kosong atau merupakan nilai default, yang tidak merepresentasikan preferensi pengguna secara akurat.
+- Hal ini perlu mendapat perhatian khusus dalam tahap pemodelan sistem rekomendasi, karena bisa menyebabkan bias atau distorsi pada hasil prediksi rekomendasi.
 
-Dominasi rating 0 mengisyaratkan adanya banyak data yang bersifat kosong atau merupakan nilai default, yang tidak merepresentasikan preferensi pengguna secara akurat.
-Hal ini perlu mendapat perhatian khusus dalam tahap pemodelan sistem rekomendasi, karena bisa menyebabkan bias atau distorsi pada hasil prediksi rekomendasi.
-
-**Distribusi Usia Pengguna**
+3. **Distribusi Usia Pengguna**
 
 Visualisasi data menunjukkan bahwa sebagian besar pengguna berada dalam rentang usia 20 hingga 50 tahun. Namun, terdapat kejanggalan data pada usia 0 tahun dan di atas 100 tahun, yang mengindikasikan keberadaan outlier.
 
-![Distribusi Usia Pengguna](image/Distribusi%20Usia%20Pengguna.png)
+![Distribusi Usia Pengguna](gambar/Distribusi%20Usia%20Pengguna.png)
 
 **Insight**:
-Insight:
-
-Kelompok usia terbanyak berasal dari rentang 30 hingga 40 tahun.
-Nilai usia ekstrem seperti 0 dan lebih dari 100 tahun perlu dipertimbangkan untuk dibersihkan.
+- Kelompok usia terbanyak berasal dari rentang 30 hingga 40 tahun.
+- Nilai usia ekstrem seperti 0 dan lebih dari 100 tahun perlu dipertimbangkan untuk dibersihkan.
 
 ---
 
@@ -241,175 +239,139 @@ Teknik yang digunakan pada notebook dan laporan disusun secara berurutan sesuai 
 ### Penanganan Nilai Hilang pada Kolom Age
 
 **Teknik yang digunakan**:
-
 - Menghilangkan missing value pada kolom Age dengan menggunakan fungsi dropna(subset=['Age']).
 
 **Proses dan Alasan**:
 Setelah pemeriksaan, ditemukan sekitar 110.762 data pengguna tidak memiliki nilai usia. Karena proporsi nilai hilang ini cukup besar (sekitar 40%), kami memutuskan untuk menghapus baris data pengguna yang kolom Age-nya kosong agar proses pemodelan tidak bias.
 
-Hasil: Awalnya, dataset Users memiliki 278.858 baris data. Setelah proses penghapusan baris yang memiliki nilai kosong pada kolom Age, jumlah data berkurang menjadi 168.096 entri dengan 3 kolom.
+**Hasil**: Awalnya, dataset Users memiliki 278.858 baris data. Setelah proses penghapusan baris yang memiliki nilai kosong pada kolom Age, jumlah data berkurang menjadi 168.096 entri dengan 3 kolom.
 
 ---
 
 ### Penanganan Outlier pada Kolom Age
 
 **Teknik yang digunakan**:
-
 - Memfilter data dengan kondisi usia >= 5 dan <= 100.
 
 **Proses dan Alasan**:
 Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, seperti 0 tahun dan 244 tahun. Untuk meningkatkan kualitas data, kami melakukan filtering sehingga hanya menyertakan pengguna dengan usia di antara 5 hingga 100 tahun.
 
-Hasil: Setelah menghapus nilai kosong di kolom Age, dataset Users memiliki 168.096 entri. Setelah proses pembersihan outlier dengan menyaring usia antara 5 hingga 100 tahun, jumlah data berkurang menjadi 166.848 entri dengan 3 kolom.
+**Hasil**: Setelah menghapus nilai kosong di kolom Age, dataset Users memiliki 168.096 entri. Setelah proses pembersihan outlier dengan menyaring usia antara 5 hingga 100 tahun, jumlah data berkurang menjadi 166.848 entri dengan 3 kolom.
 
 ---
 
 ### Penyaringan (Filtering) Data Ratings
 
 **Teknik yang digunakan**:
-
 - Menghapus baris data dengan kondisi Book-Rating == 0 menggunakan teknik filtering.
 
 **Proses dan Alasan**:
-Pada tahap ini, kami memfilter dataset Ratings dengan menghapus semua data yang memiliki nilai rating 0.
+- Pada tahap ini, kami memfilter dataset Ratings dengan menghapus semua data yang memiliki nilai rating 0. Rating 0 menunjukkan bahwa pengguna tidak secara aktif memberikan penilaian terhadap buku tersebut, sehingga data ini tidak memberikan informasi preferensi yang berarti untuk sistem rekomendasi.
 
-Rating 0 menunjukkan bahwa pengguna tidak secara aktif memberikan penilaian terhadap buku tersebut, sehingga data ini tidak memberikan informasi preferensi yang berarti untuk sistem rekomendasi.
-
-Hasil: Dataset Ratings awalnya memiliki 1.149.780 entri. Setelah menghapus data dengan nilai rating 0, jumlah entri berkurang menjadi 433.671 entri dengan 3 kolom.
+**Hasil**: Dataset Ratings awalnya memiliki 1.149.780 entri. Setelah menghapus data dengan nilai rating 0, jumlah entri berkurang menjadi 433.671 entri dengan 3 kolom.
 
 ---
 
 ### Filtering Pengguna (users) dan Buku Berdasarkan Aktivitas Minimum
 
 **Teknik yang digunakan**:
-Penyaringan Pengguna: Mempertahankan hanya pengguna yang telah memberikan minimal 3 rating.
-Penyaringan Buku: Mempertahankan hanya buku yang menerima minimal 3 rating.
-
-Melakukan penyaringan berdasarkan jumlah interaksi menggunakan fungsi value_counts() dan isin().
+- Penyaringan Pengguna: Mempertahankan hanya pengguna yang telah memberikan minimal 3 rating.
+- Penyaringan Buku: Mempertahankan hanya buku yang menerima minimal 3 rating.
+- Melakukan penyaringan berdasarkan jumlah interaksi menggunakan fungsi value_counts() dan isin().
 
 **Proses dan Alasan**:
-Tujuan penyaringan ini adalah untuk:
+- Memastikan hanya pengguna yang aktif memberikan rating yang diproses.
+- Memastikan buku yang dianalisis memiliki cukup banyak penilaian untuk memberikan informasi yang valid bagi sistem rekomendasi.
 
-Memastikan hanya pengguna yang aktif memberikan rating yang diproses.
-Memastikan buku yang dianalisis memiliki cukup banyak penilaian untuk memberikan informasi yang valid bagi sistem rekomendasi.
-
-Hasil: Setelah menghapus rating dengan nilai 0, dataset Ratings memiliki 433.671 entri. Setelah dilakukan filtering untuk mempertahankan pengguna dan buku yang memiliki minimal 3 rating, jumlah entri berkurang menjadi 203.851 dengan 3 kolom.
+**Hasil**: Setelah menghapus rating dengan nilai 0, dataset Ratings memiliki 433.671 entri. Setelah dilakukan filtering untuk mempertahankan pengguna dan buku yang memiliki minimal 3 rating, jumlah entri berkurang menjadi 203.851 dengan 3 kolom.
 
 ---
 
 ### Konversi Kolom Menjadi List
 
 **Teknik yang digunakan**:
-Pada tahap ini, kami mengubah kolom-kolom utama dari dataset Ratings menjadi format list menggunakan fungsi .tolist()
+- Mengubah kolom-kolom utama dari dataset Ratings menjadi format list menggunakan fungsi .tolist()
 
 **Proses dan Alasan**:
-Kolom yang dikonversi meliputi:
-
-User-ID menjadi list user_id
-ISBN menjadi list isbn
-Book-Rating menjadi list book_rating
+- Kolom yang dikonversi meliputi: User-ID menjadi list user_id, ISBN menjadi list isbn, Book-Rating menjadi list book_rating
 
 ---
 
 ### Membuat DataFrame Bersih untuk Modeling
 
 **Teknik yang digunakan**:
-membuat sebuah DataFrame baru bernama ratings_clean yang berisi tiga kolom utama hasil dari konversi list:
-
-user_id : ID pengguna
-isbn : ISBN buku
-book_rating : Nilai rating yang diberikan pengguna pada buku
+- Membuat sebuah DataFrame baru bernama ratings_clean yang berisi tiga kolom utama hasil dari konversi list: user_id : ID pengguna, isbn : ISBN buku, book_rating : Nilai rating yang diberikan pengguna pada buku
 
 **Proses dan Alasan**:
 Pembuatan DataFrame ini bertujuan untuk memudahkan proses pemodelan sistem rekomendasi pada tahap berikutnya, baik menggunakan metode Collaborative Filtering maupun Content-Based Filtering.
 
-Hasil: DataFrame ratings_clean yang dibuat memiliki 203.851 baris dan 3 kolom.
+**Hasil**: DataFrame ratings_clean yang dibuat memiliki 203.851 baris dan 3 kolom.
 
 ---
 
 ### Membuat Matriks User-Item untuk Collaborative Filtering
 
 **Teknik yang digunakan**:
-
 - Pada tahap ini, kami menyusun User-Item Matrix dari dataset ratings_clean.
 
 Metode yang digunakan:
-
-Membuat pivot table dengan fungsi pivot_table dari pandas.
+- Membuat pivot table dengan fungsi pivot_table dari pandas.
 
 **Proses dan Alasan**:
-Struktur matriks:
-
-Baris merepresentasikan user_id.
-Kolom merepresentasikan isbn buku.
-Nilai pada sel adalah book_rating yang diberikan oleh pengguna terhadap buku tersebut.
-Penjelasan proses:
-
-Setiap pengguna menjadi satu baris di tabel.
-Setiap buku diwakili oleh satu kolom.
-Jika pengguna memberi rating pada sebuah buku, nilai rating tersebut muncul pada sel terkait.
-Jika tidak ada rating, maka sel berisi NaN (nilai kosong).
+- **Baris**: Merepresentasikan setiap pengguna unik (`user_id`).
+- **Kolom**: Merepresentasikan setiap buku unik berdasarkan kode `ISBN`.
+- **Isi sel**: Nilai `book_rating` yang diberikan pengguna terhadap buku tertentu.
 
 **Hasil**:
-Hasil:
-
-Matriks User-Item yang terbentuk memiliki ukuran (20.908, 25.790).
-Terdapat banyak nilai missing (NaN) karena sebagian besar pengguna hanya memberikan rating pada sebagian kecil dari total buku yang tersedia.
-
+- Matriks User-Item yang terbentuk memiliki ukuran (20.908, 25.790).
+- Terdapat banyak nilai missing (NaN) karena sebagian besar pengguna hanya memberikan rating pada sebagian kecil dari total buku yang tersedia.
 ---
 
 ### Membuat Daftar User-ID dan ISBN Unik
 
 **Teknik yang digunakan**:
-
 - Mengambil semua nilai unik dari `user_id` dan `isbn` di `ratings_clean` menggunakan `.unique()` dan mengubahnya ke list.
 
 **Proses dan Alasan**:
-
 - Daftar ini nantinya akan digunakan untuk proses encoding data.
 
 **Hasil**:
-Hasil : Terdapat 20.908 User-ID unik dan 25.790 ISBN unik dalam dataset setelah pembersihan.
+- Terdapat 20.908 User-ID unik dan 25.790 ISBN unik dalam dataset setelah pembersihan.
 
 ---
 
 ### Encoding User-ID dan ISBN ke Bentuk Integer dan Memetakan (Mapping) User dan ISBN yang Telah Di-encode ke DataFrame
 
 **Teknik yang digunakan**:
-
 - Menggunakan `LabelEncoder` untuk mengubah `user_id` dan `isbn` dari string menjadi angka integer.
 
 **Proses dan Alasan**:
-
 - Model berbasis embedding di TensorFlow hanya menerima input numerik, sehingga encoding perlu dilakukan.
 - Hasil encoding disimpan dalam kolom `user` dan `book`.
 
 **Hasil**:
-
 - Setiap `user_id` dan `isbn` berhasil dipetakan ke nilai integer unik.
 - Contoh mapping:
-
-user_id isbn book_rating user book
-0 276747 0060517794 9 0 0
-1 276747 0671537458 9 0 1
-2 276747 0679776818 8 0 2
-3 276762 0380711524 5 1 3
-4 276772 0553572369 7 2 4
+- 
+| user_id | isbn       | book_rating | user | book |
+|---------|------------|-------------|------|------|
+| 276747  | 0060517794 | 9           | 0    | 0    |
+| 276747  | 0671537458 | 9           | 0    | 1    |
+| 276747  | 0679776818 | 8           | 0    | 2    |
+| 276762  | 0380711524 | 5           | 1    | 3    |
+| 276772  | 0553572369 | 7           | 2    | 4    |
 
 ---
 
 ### Konversi Nilai Rating ke Tipe Data float32
 
 **Teknik yang digunakan**:
-
 - Menggunakan `.astype('float32')` untuk mengubah nilai `book_rating`.
 
 **Proses dan Alasan**:
-
 - TensorFlow membutuhkan input numerik bertipe float untuk training model neural network.
 
 **Hasil**:
-
 - Kolom `book_rating` pada dataset `ratings_clean` berhasil dikonversi ke format `float32`.
 
 ---
@@ -417,37 +379,37 @@ user_id isbn book_rating user book
 ### Check Jumlah User dan Buku Setelah Encoding
 
 **Teknik yang digunakan**:
-
 - Menggunakan fungsi `nunique()` untuk menghitung jumlah user dan buku unik setelah encoding.
 
 **Proses dan Alasan**:
-
 - Tahapan ini digunakan untuk verifikasi bahwa proses encoding berhasil dilakukan secara konsisten dan tidak ada data yang hilang.
 - Menjadi acuan juga untuk menentukan input dimension pada embedding layer model deep learning.
 
-**Hasil**:
-Hasil : Setelah proses encoding, ditemukan bahwa terdapat 20.908 user unik dan 25.790 buku unik dalam dataset.
+**Hasil**: Setelah proses encoding, ditemukan bahwa terdapat 20.908 user unik dan 25.790 buku unik dalam dataset.
 
 ---
 
 ### Membagi (Split) Dataset untuk Pelatihan dan Validasi
 
 **Teknik yang digunakan**:
-
 - Menggunakan `train_test_split` dengan rasio 80:20.
 
 **Proses dan Alasan**:
-Dataset diacak dan dipisahkan menjadi dua bagian, yaitu data pelatihan (training) dan data validasi (validation), dengan perbandingan 80:20.
+- Dataset diacak dan dibagi menjadi dua bagian:
+  - **Data pelatihan (training)**: 80%
+  - **Data validasi (validation)**: 20%
+  
+- **Fitur (X)**: Berupa pasangan `user` dan `book` yang merepresentasikan interaksi pengguna dengan buku.
+- **Target (y)**: Nilai `book_rating` yang telah dinormalisasi ke dalam rentang **0 hingga 1**.
 
-Fitur (x) terdiri dari pasangan user dan book.
-Target (y) adalah nilai rating buku (book_rating) yang telah dinormalisasi ke rentang 0 hingga 1.
-Tujuan pemisahan ini adalah untuk memastikan data pelatihan dan validasi tidak tumpang tindih, sehingga model dapat belajar dengan baik dan diuji secara akurat.
+**Tujuan pemisahan data**:
+Pemisahan ini dilakukan untuk menghindari tumpang tindih antara data pelatihan dan data validasi, sehingga model:
+- Dapat **belajar dengan optimal** dari data pelatihan.
+- Dapat **dilakukan evaluasi secara akurat** menggunakan data validasi.
 
 **Hasil**:
-Hasil pembagian data:
-
-Bentuk data pelatihan: x_train (163.080, 2), y_train (163.080,)
-Bentuk data validasi: x_val (40.771, 2), y_val (40.771,)
+- Bentuk data pelatihan: x_train (163.080, 2), y_train (163.080,)
+- Bentuk data validasi: x_val (40.771, 2), y_val (40.771,)
 
 ---
 
@@ -463,93 +425,131 @@ Pada bagian ini, kami membangun tiga pendekatan sistem rekomendasi untuk menyele
 
 ### Content-Based Filtering
 
-Pendekatan ini merekomendasikan buku berdasarkan kemiripan konten, dalam hal ini judul buku. Tahapan modeling dilakukan sebagai berikut:
+Pendekatan ini merekomendasikan buku berdasarkan kemiripan konten, khususnya pada judul buku. Berikut adalah tahapan modeling yang dilakukan:
+
+---
 
 #### 1. Membuat TF-IDF Matrix dari Judul Buku
 
-Pada tahap ini, kami mempersiapkan fitur konten dari buku dengan langkah-langkah:
+Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut:
 
-1. Filtering ISBN Buku: Dataset books difilter agar hanya menyertakan ISBN yang terdapat dalam ratings_clean.
+1. **Filtering ISBN Buku**  
+   Dataset `books` difilter agar hanya menyertakan ISBN yang terdapat dalam `ratings_clean`.  
+   Tujuan: Menyelaraskan data buku dengan buku-buku yang telah dirating secara aktif.
 
-Tujuan: Menyelaraskan data buku dengan buku-buku yang telah dirating secara aktif. 2. Menangani Missing Value: Kolom Book-Title yang kosong diisi dengan string kosong ('') untuk mencegah error saat proses vektorisasi teks.
+2. **Menangani Missing Value**  
+   Kolom `Book-Title` yang kosong diisi dengan string kosong (`''`).  
+   Teknik: `fillna('')`
 
-Teknik: fillna('') 3. TF-IDF Vectorization: Digunakan TfidfVectorizer dari scikit-learn dengan parameter stop_words='english'.
+3. **TF-IDF Vectorization**  
+   Menggunakan `TfidfVectorizer` dari `scikit-learn` dengan parameter `stop_words='english'`.  
+   Tujuan: Mengubah teks judul buku menjadi representasi numerik berdasarkan pentingnya kata (frekuensi term-inverse document).
 
-Tujuan: Mengubah teks judul buku menjadi representasi numerik berdasarkan pentingnya kata (frekuensi term invers dokumen). 4. Fit dan Transform: TF-IDF Vectorizer di-fit dan diterapkan (transform) pada kolom Book-Title.
+4. **Fit dan Transform**  
+   `TF-IDF Vectorizer` di-fit dan diterapkan (`transform`) pada kolom `Book-Title`.
 
-Hasil: TF-IDF Matrix yang merepresentasikan setiap judul buku dalam bentuk vektor.
+---
 
-Hasil:
+#### Hasil TF-IDF Matrix
 
-Ukuran Matrix: (24.253, 16.052)
+- **Ukuran Matrix:** (24.253, 16.052)  
+  - 24.253 baris: jumlah judul buku yang dianalisis  
+  - 16.052 kolom: jumlah kata unik (fitur) dari semua judul buku setelah stopwords dihapus
 
-24.253 baris = jumlah judul buku yang dianalisis.
-16.052 kolom = jumlah kata unik (fitur) dari semua judul buku setelah stopwords dihapus.
-Makna Matrix:
+---
 
-Setiap baris merepresentasikan sebuah buku dalam bentuk vektor fitur.
-Setiap kolom merepresentasikan kata unik yang digunakan dalam judul-judul buku.
-Nilai pada matrix menunjukkan seberapa penting kata tersebut bagi suatu judul (berdasarkan frekuensi term dan seberapa umum kata tersebut dalam seluruh koleksi judul).
+#### Makna Matrix
 
-#### 2. Menghitung Cosine Similarity Antar Judul Buku
+- Setiap baris merepresentasikan sebuah buku dalam bentuk vektor fitur.
+- Setiap kolom merepresentasikan kata unik yang digunakan dalam judul-judul buku.
+- Nilai pada matrix menunjukkan seberapa penting kata tersebut bagi suatu judul:
+  - Semakin tinggi nilainya, semakin penting kata tersebut dalam konteks judul tertentu.
+  - Nilai dihitung berdasarkan frekuensi kata dalam judul dan seberapa jarang kata tersebut muncul di keseluruhan koleksi.
 
-Teknik yang Digunakan
+#### 2. Menghitung *Cosine Similarity* Antar Judul Buku
 
-Cosine Similarity:
-Mengukur sudut antar dua vektor TF-IDF.
+---
 
-Semakin kecil sudutnya (semakin paralel vektornya), maka semakin mirip kedua judul buku.
+**Teknik yang Digunakan**
 
-Nilai cosine similarity:
+- *Cosine Similarity*:  
+  Mengukur sudut antara dua vektor TF-IDF.  
+  Semakin kecil sudutnya (*semakin paralel vektornya*), maka semakin mirip kedua judul buku.
 
-1.0 → sangat mirip
-0.0 → tidak mirip sama sekali
-Proses
+- *Nilai Cosine Similarity*:  
+  - *1.0* → sangat mirip  
+  - *0.0* → tidak mirip sama sekali
 
-Menggunakan fungsi cosine_similarity dari sklearn.metrics.pairwise.
+---
 
-Input: TF-IDF matrix (24.253 x 16.052).
+**Proses**
 
-Output: Matrix similiarity (24.253 x 24.253), di mana:
+- Menggunakan fungsi `cosine_similarity` dari *sklearn.metrics.pairwise*
+- *Input*: TF-IDF matrix berukuran *(24.253 × 16.052)*
+- *Output*: Matrix similarity *(24.253 × 24.253)*
 
-Baris ke-i dan kolom ke-j merepresentasikan tingkat kemiripan antara buku ke-i dan buku ke-j berdasarkan judul.
+  - Baris ke-*i* dan kolom ke-*j* merepresentasikan tingkat kemiripan antara buku ke-*i* dan buku ke-*j* berdasarkan judul.
 
-Hasil: Matriks cosine similarity yang diperoleh memiliki dimensi (24.253, 24.253). Ini menunjukkan bahwa sebanyak 24.253 judul buku saling dibandingkan untuk menilai seberapa mirip masing-masing judul satu dengan yang lain.
+---
 
-Menghitung Kemiripan Cosine Antar Pengguna
+**Hasil**
 
-Pada tahap ini, kami melakukan perhitungan skor kemiripan antar seluruh pengguna berdasarkan pola rating mereka terhadap buku.
+- Matriks *cosine similarity* yang diperoleh memiliki dimensi *(24.253, 24.253)*.
+- Ini menunjukkan bahwa sebanyak *24.253 judul buku* dibandingkan satu sama lain untuk mengukur tingkat kemiripan berdasarkan judul.
 
-Metode yang digunakan:
+---
 
-Cosine Similarity: Mengukur tingkat kesamaan antar vektor pengguna pada User-Item Matrix, dengan skor antara 0 (tidak mirip) hingga 1 (sangat mirip).
+#### Menghitung *Cosine Similarity* Antar Pengguna
 
-Proses:
+---
 
-Menggunakan fungsi cosine_similarity dari scikit-learn.
-Nilai missing (NaN) pada User-Item Matrix diisi dengan angka 0 sebelum dilakukan perhitungan.
-Kemiripan cosine dihitung untuk setiap pasangan pengguna dalam dataset.
+**Proses Perhitungan Kemiripan Antar Pengguna**
 
-Hasil: Matriks cosine similarity yang diperoleh memiliki dimensi (20.908, 20.908). Ini menunjukkan bahwa kemiripan dihitung antar 20.908 pengguna dengan membandingkan setiap pasangan pengguna satu sama lain. teks yang dimiringkan
+Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berdasarkan pola rating mereka terhadap buku.
+
+- *Metode yang Digunakan*:  
+  *Cosine Similarity*, untuk mengukur tingkat kesamaan antar vektor pengguna pada *User-Item Matrix*.  
+  Skor berkisar antara *0 (tidak mirip)* hingga *1 (sangat mirip)*.
+
+- *Langkah-langkah*:
+  1. Gunakan fungsi `cosine_similarity` dari *scikit-learn*.
+  2. Nilai *missing* (`NaN`) pada *User-Item Matrix* diisi dengan angka *0*.
+  3. Hitung kemiripan untuk setiap pasangan pengguna dalam dataset.
+
+---
+
+**Hasil**
+
+- Matriks *cosine similarity* antar pengguna memiliki dimensi *(20.908, 20.908)*.
+- Artinya, kemiripan dihitung antar *20.908 pengguna* dengan membandingkan setiap pasangan pengguna satu sama lain.
 
 #### 3. Rekomendasi Berdasarkan Judul Buku
 
-Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan Top-N buku yang memiliki kemiripan tinggi berdasarkan judul buku.
+Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan *Top-N* buku yang memiliki kemiripan tinggi berdasarkan judul buku.
 
-Langkah-langkah yang diterapkan meliputi:
+---
 
-Memanfaatkan matriks Cosine Similarity yang sudah tersedia.
-Mencari indeks buku berdasarkan judul yang diinput.
-Mengurutkan skor kemiripan dan memilih Top-N buku dengan nilai tertinggi.
-Fungsi ini bertujuan memberikan rekomendasi buku yang serupa sesuai dengan preferensi pengguna terhadap sebuah buku tertentu.
+**Langkah-langkah yang Diterapkan**:
 
-Contoh Output Rekomendasi Top-5 Buku (Menggunakan Content-Based Filtering) Untuk menguji fungsi rekomendasi berbasis Content-Based Filtering yang sudah dibuat, kami menggunakan judul buku berikut sebagai input:
+1. Memanfaatkan matriks *Cosine Similarity* yang telah dihitung sebelumnya.
+2. Mencari indeks buku berdasarkan judul yang dijadikan input.
+3. Mengurutkan skor kemiripan dan memilih *Top-N* buku dengan nilai tertinggi.
+4. Fungsi ini bertujuan memberikan rekomendasi buku yang serupa dengan preferensi pengguna terhadap sebuah buku tertentu.
 
-Buku Input: ‘Harry Potter and the Chamber of Secrets (Book 2)’
+---
 
-Sistem kemudian mencari 5 buku dengan tingkat kemiripan tertinggi berdasarkan analisis TF-IDF dan Cosine Similarity antar judul buku.
+**Contoh Output: Rekomendasi Top-5 Buku**  
+*(Menggunakan Content-Based Filtering)*
 
-**Top-5 Rekomendasi:**
+Untuk menguji fungsi rekomendasi berbasis *Content-Based Filtering* yang telah dibuat, kami menggunakan judul buku berikut sebagai input:
+
+- *Buku Input*: **Harry Potter and the Chamber of Secrets (Book 2)**
+
+Sistem kemudian mencari 5 buku dengan tingkat kemiripan tertinggi berdasarkan analisis *TF-IDF* dan *Cosine Similarity* antar judul buku.
+
+---
+
+**Top-5 Rekomendasi**:
 
 | No  | Book-Title                                                | Book-Author   |
 | :-- | :-------------------------------------------------------- | :------------ |
@@ -559,49 +559,64 @@ Sistem kemudian mencari 5 buku dengan tingkat kemiripan tertinggi berdasarkan an
 | 4   | Harry Potter and the Chamber of Secrets Postcard Book     | J. K. Rowling |
 | 5   | Harry Potter and the Chamber of Secrets (Book 2 Audio CD) | J. K. Rowling |
 
-Interpretasi Hasil:
+---
 
-## Seluruh buku yang direkomendasikan merupakan variasi dari "Harry Potter and the Chamber of Secrets," seperti edisi berbeda atau format yang beragam (buku cetak, audio CD, kartu pos). Hal ini menunjukkan bahwa metode Content-Based Filtering yang menggunakan kemiripan judul cukup efektif dalam menangkap kesamaan isi atau tema antar buku.
+**Interpretasi Hasil**:
+
+Seluruh buku yang direkomendasikan merupakan variasi dari *"Harry Potter and the Chamber of Secrets"*, seperti edisi berbeda atau format yang beragam (buku cetak, audio CD, kartu pos).  
+Hal ini menunjukkan bahwa metode *Content-Based Filtering* yang menggunakan kemiripan judul cukup efektif dalam menangkap kesamaan isi atau tema antar buku.
 
 ### Model Development dengan Collaborative Filtering
 
 Pada tahap ini, kami mengembangkan fungsi rekomendasi yang memberikan saran buku kepada pengguna berdasarkan kesamaan preferensi dengan pengguna lain.
 
-Metode yang digunakan:
+---
 
-User-Based Collaborative Filtering: Sistem mencari pengguna lain yang memiliki pola pemberian rating buku yang mirip dengan pengguna target menggunakan cosine similarity.
-Buku-buku yang mendapat rating tinggi dari pengguna serupa, namun belum pernah dinilai oleh pengguna target, akan direkomendasikan.
-Langkah-langkah fungsi:
+**Metode yang Digunakan:**
 
-Menghitung skor kemiripan antara pengguna target dengan seluruh pengguna lain.
-Memilih 5 pengguna paling mirip selain pengguna itu sendiri.
-Menghitung rata-rata rating untuk buku-buku yang diberikan oleh pengguna-pengguna mirip tersebut.
-Menyaring buku yang belum pernah dirating oleh pengguna target.
-Memilih Top-N buku berdasarkan rata-rata rating tertinggi.
-Menggabungkan data ISBN buku dengan judul (Book-Title) dan pengarang (Book-Author).
-Menambahkan informasi rata-rata rating (Average-Rating) ke dalam hasil rekomendasi.
-Tujuan:
+- **User-Based Collaborative Filtering**  
+  Sistem mencari pengguna lain yang memiliki pola pemberian rating buku yang mirip dengan pengguna target menggunakan *cosine similarity*.
+  Buku-buku yang mendapat rating tinggi dari pengguna serupa, namun belum pernah dinilai oleh pengguna target, akan direkomendasikan.
 
+---
+
+**Langkah-langkah Fungsi:**
+
+1. Menghitung skor kemiripan antara pengguna target dengan seluruh pengguna lain.
+2. Memilih 5 pengguna paling mirip selain pengguna itu sendiri.
+3. Menghitung rata-rata rating untuk buku-buku yang diberikan oleh pengguna-pengguna mirip tersebut.
+4. Menyaring buku yang belum pernah dirating oleh pengguna target.
+5. Memilih *Top-N* buku berdasarkan rata-rata rating tertinggi.
+6. Menggabungkan data ISBN buku dengan judul (*Book-Title*) dan pengarang (*Book-Author*).
+7. Menambahkan informasi rata-rata rating (*Average-Rating*) ke dalam hasil rekomendasi.
+
+**Tujuan:**  
 Menyediakan rekomendasi buku yang kemungkinan besar disukai oleh pengguna berdasarkan perilaku dan preferensi pengguna lain yang serupa.
+
+---
 
 #### 1. Membentuk User-Item Matrix
 
 - Matriks interaksi user-item dibentuk dalam bentuk pivot table.
-- Baris adalah `user_id`, kolom adalah `isbn`, dan isi adalah `book_rating`.
-- **Ukuran Matriks**: **(20.908, 25.790)**
+- Baris merepresentasikan `user_id`, kolom merepresentasikan `isbn`, dan nilai pada sel adalah `book_rating`.
+- **Ukuran Matriks:** **(20.908, 25.790)**
+
+---
 
 #### 2. Menghitung Cosine Similarity Antar User
 
 Untuk mengetahui tingkat kemiripan antar pengguna:
 
-- **Teknik**: Menggunakan `cosine_similarity` pada User-Item Matrix yang telah diisi missing value-nya (`NaN`) dengan angka 0.
-- **Hasil**: Matriks similarity antar user berukuran **(20.908, 20.908)**.
+- **Teknik:** Menggunakan `cosine_similarity` dari `sklearn` pada *User-Item Matrix* yang telah diisi nilai kosong (`NaN`) dengan angka 0.
+- **Hasil:** Matriks similarity antar user berukuran **(20.908, 20.908)**
+
+---
 
 #### 3. Rekomendasi Berdasarkan User Similarity
 
 **Contoh Input User:**
 
-> User ID: 8
+> **User ID:** 8
 
 **Top-3 Rekomendasi Buku:**
 
@@ -609,9 +624,10 @@ Untuk mengetahui tingkat kemiripan antar pengguna:
 | :-: | :--------: | :-------------------- | :------------- | :------------: |
 |  1  | 0446310786 | To Kill a Mockingbird | Harper Lee     |      10.0      |
 |  2  | 0684874350 | ANGELA'S ASHES        | Frank McCourt  |      10.0      |
-|  3  | 0440212561 | Outlander             | DIANA GABALDON |      10.0      |
+|  3  | 0440212561 | Outlander             | Diana Gabaldon |      10.0      |
 
-Hasil: Hanya 3 rekomendasi yang berhasil ditampilkan karena hanya 3 ISBN yang cocok dengan data buku yang tersedia (books_filtered).
+**Catatan:**  
+Hanya 3 rekomendasi yang berhasil ditampilkan karena hanya 3 ISBN yang cocok dengan data buku yang tersedia pada `books_filtered`.
 
 ---
 
@@ -627,59 +643,63 @@ Kami mengembangkan model deep learning kustom menggunakan TensorFlow/Keras denga
 - **Book Embedding Layer:** Membuat representasi vektor laten yang mewakili setiap buku.
 - **Bias Layer:** Menambahkan bias khusus untuk masing-masing pengguna dan buku.
 - **Dot Product:** Menghitung skor kecocokan antara vektor embedding pengguna dan buku.
-- **Fungsi Aktivasi:** Sigmoid, untuk memastikan nilai prediksi berada dalam rentang \[0, 1].
+- **Fungsi Aktivasi:** Sigmoid, untuk memastikan nilai prediksi berada dalam rentang \[0, 1\].
 
 Model ini dirancang untuk secara efisien mempelajari pola interaksi antara pengguna dan item melalui embedding yang terlatih.
 
+---
+
 #### Proses Model:
 
-Inisialisasi dan Kompilasi Model RecommenderNet
+**Inisialisasi dan Kompilasi Model RecommenderNet**
 
 Setelah menyelesaikan desain arsitektur model, kami melakukan proses inisialisasi dan kompilasi dengan pengaturan sebagai berikut:
 
-Fungsi Loss: Binary Crossentropy
-Optimizer: Adam dengan learning rate 0.001
-Metrik Evaluasi: Root Mean Squared Error (RMSE)
-Pemilihan fungsi loss binary crossentropy didasarkan pada karakter output model yang memprediksi probabilitas keterkaitan antara pengguna dan buku dalam rentang nilai [0,1].
+- **Fungsi Loss:** Binary Crossentropy  
+- **Optimizer:** Adam dengan learning rate 0.001  
+- **Metrik Evaluasi:** Root Mean Squared Error (RMSE)  
+
+Pemilihan fungsi loss binary crossentropy didasarkan pada karakter output model yang memprediksi probabilitas keterkaitan antara pengguna dan buku dalam rentang nilai \[0,1\].
 
 Setelah tahap kompilasi selesai, model siap untuk dilatih.
-Pelatihan Model RecommenderNet
 
-Di tahap ini, model RecommenderNet dilatih menggunakan data yang telah dibagi menjadi set pelatihan dan validasi.
+**Pelatihan Model RecommenderNet**
+
+Model dilatih menggunakan data yang telah dibagi menjadi set pelatihan dan validasi.
 
 Pengaturan pelatihan meliputi:
 
-Batch Size: 8
-Jumlah Epoch: 100
-Optimizer: Adam
-Fungsi Loss: Binary Crossentropy
-Metrik Evaluasi: Root Mean Squared Error (RMSE)
+- **Batch Size:** 8  
+- **Jumlah Epoch:** 100  
+- **Optimizer:** Adam  
+- **Fungsi Loss:** Binary Crossentropy  
+- **Metrik Evaluasi:** Root Mean Squared Error (RMSE)  
+
 Konfigurasi ini bertujuan untuk mengoptimalkan performa model dalam mempelajari pola interaksi antara pengguna dan buku secara efektif.
+
+---
 
 #### Hasil Output:
 
-Hasil Pelatihan:
+- **Nilai RMSE terbaik pada data training:** sekitar 0.1517  
+- **Nilai RMSE terbaik pada data validasi:** sekitar 0.1835  
+- Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.  
+- Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
 
-Nilai RMSE terbaik pada data training mencapai sekitar 0.1517.
-Nilai RMSE terbaik pada data validasi mencapai sekitar 0.1835.
-Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.
-Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
+---
 
 #### Contoh Rekomendasi:
 
-Simulasi Rekomendasi Model-Based Collaborative Filtering (Keras)
+**Simulasi Rekomendasi Model-Based Collaborative Filtering (Keras)**
 
 Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 263663.
 
 Proses:
 
-Model menerima input berupa ID user dan seluruh daftar buku (ISBN).
-Model memprediksi skor kecocokan atau preferensi user terhadap setiap buku dalam skala [0,1].
-Berdasarkan skor prediksi, sistem memilih buku dengan skor tertinggi yang belum pernah dirating oleh user tersebut.
-Hasil rekomendasi berupa daftar buku yang diprediksi paling sesuai dengan minat dan preferensi user tersebut.
-Tujuan:
-
-Memberikan rekomendasi buku yang personal dan relevan untuk User-ID 263663 berdasarkan pola interaksi dan preferensi yang dipelajari oleh model dari data pengguna lain.
+- Model menerima input berupa ID user dan seluruh daftar buku (ISBN).  
+- Model memprediksi skor kecocokan atau preferensi user terhadap setiap buku dalam skala \[0,1\].  
+- Berdasarkan skor prediksi, sistem memilih buku dengan skor tertinggi yang belum pernah dirating oleh user tersebut.  
+- Hasil rekomendasi berupa daftar buku yang diprediksi paling sesuai dengan minat dan preferensi user tersebut.
 
 | No  | Book-Title                                             | Book-Author      |
 | :-- | :----------------------------------------------------- | :--------------- |
@@ -689,21 +709,21 @@ Memberikan rekomendasi buku yang personal dan relevan untuk User-ID 263663 berda
 | 4   | Dilbert: A Book of Postcards                           | Scott Adams      |
 | 5   | Harry Potter and the Chamber of Secrets Postcard Book  | J.K. Rowling     |
 
-Interpretasi Hasil:
+**Interpretasi Hasil:**
 
 Model menunjukkan kemampuan dalam memberikan rekomendasi buku yang populer dan sesuai dengan minat pengguna. Preferensi pengguna terhadap genre tertentu, seperti fantasy dan literature classic, tampak konsisten dalam hasil rekomendasi. Hal ini mengindikasikan bahwa model berbasis embedding berhasil mengenali dan mempelajari representasi laten dari hubungan antara pengguna dan buku yang mereka sukai.
 
+---
+
 ### Top-N Recommendation Output
 
-- **Content-Based Filtering**: Berdasarkan kemiripan judul buku.
-- **Memory-Based Collaborative Filtering**: Berdasarkan user lain yang mirip.
-- **Model-Based Collaborative Filtering**: Berdasarkan representasi laten dari interaksi user-buku.
+- **Content-Based Filtering:** Berdasarkan kemiripan judul buku.  
+- **Memory-Based Collaborative Filtering:** Berdasarkan user lain yang mirip.  
+- **Model-Based Collaborative Filtering:** Berdasarkan representasi laten dari interaksi user-buku.
 
 ---
 
 ### Perbandingan Pendekatan
-
-## Perbandingan Tiga Pendekatan Rekomendasi
 
 | **Pendekatan**                                          | **Kelebihan**                                                                                                                               | **Kekurangan**                                                                                                                            |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -714,7 +734,6 @@ Model menunjukkan kemampuan dalam memberikan rekomendasi buku yang populer dan s
 Dengan mengombinasikan ketiga pendekatan ini, sistem rekomendasi dapat menjadi lebih tangguh dan adaptif. Pendekatan gabungan memungkinkan sistem memberikan rekomendasi yang relevan, baik dari sisi kesamaan konten maupun dari pola interaksi dan preferensi pengguna.
 
 ---
-
 # Evaluation
 
 Pada bagian ini, kami mengevaluasi kinerja sistem rekomendasi yang telah dibangun menggunakan dua pendekatan: Content-Based Filtering dan Collaborative Filtering (baik Memory-Based maupun Model-Based).
@@ -723,108 +742,109 @@ Pada bagian ini, kami mengevaluasi kinerja sistem rekomendasi yang telah dibangu
 
 ## Visualisasi Learning Curve
 
-Grafik tersebut memperlihatkan tren perubahan nilai Root Mean Squared Error (RMSE) pada data pelatihan dan validasi sepanjang proses pelatihan model.
+Grafik berikut memperlihatkan tren perubahan nilai Root Mean Squared Error (RMSE) pada data pelatihan dan validasi sepanjang proses pelatihan model.
 
-![Learning Curve](image/Learning%20Curve%20-%20RMSE.png)
+![Learning Curve](gambar/Learning%20Curve%20-%20RMSE.png)
 
-**Insight:**
+**Insight:**  
 RMSE pada data pelatihan secara bertahap menurun hingga mencapai nilai mendekati 0.1517, sementara RMSE pada data validasi relatif stabil di kisaran 0.1835. Tidak ditemukan tanda-tanda overfitting yang signifikan. Model menunjukkan konvergensi yang baik dalam rentang sekitar 10 hingga 15 epoch. Temuan ini mengindikasikan bahwa model cukup efektif dalam memahami pola interaksi antara pengguna dan buku, serta mampu menghasilkan prediksi dengan tingkat kesalahan yang relatif rendah.
 
 ---
 
 ## Metrik Evaluasi: Root Mean Squared Error (RMSE)
 
-Metrik Evaluasi: Root Mean Squared Error (RMSE)
+Untuk menilai kinerja model Collaborative Filtering yang dibangun menggunakan TensorFlow Keras, kami menggunakan metrik Root Mean Squared Error (RMSE). RMSE merupakan metrik populer dalam permasalahan regresi, termasuk prediksi nilai rating, karena dapat menunjukkan sejauh mana hasil prediksi menyimpang dari nilai aktual.
 
-Untuk menilai kinerja model Collaborative Filtering yang dibangun menggunakan TensorFlow Keras, digunakan metrik Root Mean Squared Error (RMSE). RMSE merupakan metrik populer dalam permasalahan regresi, termasuk prediksi nilai rating, karena dapat menunjukkan sejauh mana hasil prediksi menyimpang dari nilai aktual.
+**Alasan Penggunaan RMSE:**
 
-Alasan Penggunaan RMSE:
-
-Data yang digunakan merupakan rating berskala kontinu, bukan klasifikasi.
-RMSE memberikan informasi yang jelas mengenai besarnya kesalahan prediksi dalam satuan rating.
-Nilai RMSE yang lebih kecil mengindikasikan model yang lebih akurat.
+- Data yang digunakan merupakan rating berskala kontinu, bukan klasifikasi.  
+- RMSE memberikan informasi yang jelas mengenai besarnya kesalahan prediksi dalam satuan rating.  
+- Nilai RMSE yang lebih kecil mengindikasikan model yang lebih akurat.
 
 ---
 
 ## Hasil Evaluasi Model
 
-Hasil Evaluasi Model:
+| Dataset        | RMSE       |
+| -------------- | ---------- |
+| Training Data  | ± 0.1517   |
+| Validation Data| ± 0.1835   |
 
-RMSE pada data pelatihan: ± 0.1517
-RMSE pada data validasi: ± 0.1835
-Interpretasi:
+**Interpretasi:**
 
-Nilai RMSE pada data training dan validation relatif kecil, menunjukkan bahwa model memiliki kemampuan prediksi yang cukup akurat.
-Selisih antara RMSE training dan validation yang tidak terlalu besar menandakan tidak adanya gejala overfitting yang signifikan.
-Model menunjukkan proses pembelajaran yang stabil dan mampu menggeneralisasi dengan baik terhadap data baru.
-
----
-
-## Content-Based Filtering (Precision@5):
-
-Rata-rata Precision@5: 0.0633 atau 6,33%
-Interpretasi:
-
-Dari lima rekomendasi teratas, rata-rata hanya sekitar 6,3% yang benar-benar sesuai dengan preferensi pengguna berdasarkan histori rating.
-Sistem cenderung merekomendasikan buku dengan kemiripan judul, namun belum tentu relevan secara personal.
-Insight Tambahan:
-
-Rendahnya tingkat presisi disebabkan oleh keterbatasan fitur konten yang digunakan, yakni hanya mengandalkan judul buku.
-Meskipun performanya kurang optimal dari sisi presisi, pendekatan Content-Based Filtering tetap memiliki nilai guna, terutama dalam mengatasi permasalahan cold-start, baik untuk pengguna baru maupun item (buku) yang belum banyak diberi rating.
+- Nilai RMSE pada data training dan validation relatif kecil, menunjukkan bahwa model memiliki kemampuan prediksi yang cukup akurat.  
+- Selisih antara RMSE training dan validation yang tidak terlalu besar menandakan tidak adanya gejala overfitting yang signifikan.  
+- Model menunjukkan proses pembelajaran yang stabil dan mampu menggeneralisasi dengan baik terhadap data baru.
 
 ---
 
+## Content-Based Filtering (Precision@5)
+
+- **Rata-rata Precision@5:** 0.0633 atau 6,33%
+
+**Interpretasi:**
+
+- Dari lima rekomendasi teratas, rata-rata hanya sekitar 6,3% yang benar-benar sesuai dengan preferensi pengguna berdasarkan histori rating.  
+- Sistem cenderung merekomendasikan buku dengan kemiripan judul, namun belum tentu relevan secara personal.
+
+**Insight Tambahan:**
+
+- Rendahnya tingkat presisi disebabkan oleh keterbatasan fitur konten yang digunakan, yakni hanya mengandalkan judul buku.  
+- Meskipun performanya kurang optimal dari sisi presisi, pendekatan Content-Based Filtering tetap memiliki nilai guna, terutama dalam mengatasi permasalahan *cold-start*, baik untuk pengguna baru maupun item (buku) yang belum banyak diberi rating.
+
+---
 ## Hubungan Evaluasi dengan Business Understanding
 
 Evaluasi terhadap model rekomendasi ini mengacu kembali pada tujuan bisnis dan rumusan masalah yang mendasari pembangunan sistem, guna memastikan solusi yang dikembangkan relevan dan aplikatif.
 
 ---
 
-### Masalah 1:
-
+### Masalah 1:  
 Pengguna mengalami kesulitan dalam menentukan pilihan buku di tengah banyaknya opsi yang tersedia.
 
-Solusi & Refleksi Evaluasi: Sistem rekomendasi mampu mempermudah proses pencarian dengan menyajikan daftar buku teratas yang sesuai dengan preferensi masing-masing pengguna. Rekomendasi yang ditampilkan terbukti sejalan dengan minat dan genre favorit user, baik melalui pendekatan berbasis konten maupun perilaku pengguna lain yang serupa.
+**Solusi & Refleksi Evaluasi:**  
+Sistem rekomendasi mampu mempermudah proses pencarian dengan menyajikan daftar buku teratas yang sesuai dengan preferensi masing-masing pengguna. Rekomendasi yang ditampilkan terbukti sejalan dengan minat dan genre favorit user, baik melalui pendekatan berbasis konten maupun perilaku pengguna lain yang serupa.
 
 ---
 
-### Masalah 2:
-
+### Masalah 2:  
 Minimnya data interaksi dari pengguna baru atau pasif menyulitkan dalam memahami preferensinya.
 
-Solusi & Refleksi Evaluasi: Dengan mengandalkan pendekatan berbasis konten, sistem tetap dapat memberikan saran buku meskipun histori interaksi sangat terbatas. Hal ini menjadi solusi awal yang efektif dalam menghadapi tantangan cold-start, terutama saat pengguna belum aktif memberikan rating.
+**Solusi & Refleksi Evaluasi:**  
+Dengan mengandalkan pendekatan berbasis konten, sistem tetap dapat memberikan saran buku meskipun histori interaksi sangat terbatas. Hal ini menjadi solusi awal yang efektif dalam menghadapi tantangan *cold-start*, terutama saat pengguna belum aktif memberikan rating.
 
 ---
 
-### Masalah 3:
-
+### Masalah 3:  
 Platform membutuhkan pendekatan personalisasi untuk meningkatkan pengalaman pengguna dan mendorong keterlibatan lebih dalam.
 
-Solusi & Refleksi Evaluasi: Melalui pendekatan Collaborative Filtering, baik berbasis pengguna maupun model, sistem dapat mengidentifikasi preferensi tersembunyi dan menyusun rekomendasi secara personal. Model deep learning juga berkontribusi besar dalam menghasilkan prediksi akurat berkat representasi laten (embedding) yang dibentuk dari interaksi user-buku, seperti tercermin dari nilai RMSE yang rendah.
+**Solusi & Refleksi Evaluasi:**  
+Melalui pendekatan Collaborative Filtering, baik berbasis pengguna maupun model, sistem dapat mengidentifikasi preferensi tersembunyi dan menyusun rekomendasi secara personal. Model deep learning juga berkontribusi besar dalam menghasilkan prediksi akurat berkat representasi laten (embedding) yang dibentuk dari interaksi user-buku, seperti tercermin dari nilai RMSE yang rendah.
 
 ---
 
 ### Tujuan Bisnis yang Tercapai:
 
-Sistem membantu pengguna dalam menemukan buku yang relevan dengan minat dan kebiasaan bacanya.
-Rekomendasi yang diberikan mampu mengurangi kebingungan pengguna saat dihadapkan dengan banyak pilihan.
-Pengalaman pengguna meningkat karena sistem memberikan saran yang terasa lebih personal dan kontekstual.
-Pengguna terdorong untuk menjelajahi genre-genre baru berkat kemampuan model dalam mengenali pola minat yang tidak langsung terlihat.
+- Sistem membantu pengguna dalam menemukan buku yang relevan dengan minat dan kebiasaan bacanya.  
+- Rekomendasi yang diberikan mampu mengurangi kebingungan pengguna saat dihadapkan dengan banyak pilihan.  
+- Pengalaman pengguna meningkat karena sistem memberikan saran yang terasa lebih personal dan kontekstual.  
+- Pengguna terdorong untuk menjelajahi genre-genre baru berkat kemampuan model dalam mengenali pola minat yang tidak langsung terlihat.
 
 ---
 
-**Kesimpulan:**
-Model telah berhasil menjawab seluruh problem statements, memenuhi goals bisnis, dan memberikan solusi teknis yang tepat sesuai dengan karakteristik data dan kebutuhan pengguna.
+**Kesimpulan:**  
+Model telah berhasil menjawab seluruh *problem statements*, memenuhi goals bisnis, dan memberikan solusi teknis yang tepat sesuai dengan karakteristik data dan kebutuhan pengguna.
 
 ---
 
 ## Kesimpulan Evaluasi Hasil Rekomendasi
 
-Kesimpulan Evaluasi Sistem:
-Pendekatan Content-Based Filtering terbukti cukup efektif sebagai langkah awal, namun keterbatasannya terletak pada fokus yang hanya mengandalkan judul buku. Nilai Precision@5 yang hanya mencapai 6,33% menandakan bahwa sistem ini belum sepenuhnya mampu menangkap preferensi personal secara mendalam.
+**Kesimpulan Evaluasi Sistem:**  
 
-Sementara itu, User-Based Collaborative Filtering menawarkan rekomendasi yang lebih sesuai dengan referensi pengguna lain yang serupa, meskipun performanya menurun ketika diterapkan pada pengguna baru atau yang belum aktif.
+- Pendekatan Content-Based Filtering terbukti cukup efektif sebagai langkah awal, namun keterbatasannya terletak pada fokus yang hanya mengandalkan judul buku. Nilai Precision@5 yang hanya mencapai 6,33% menandakan bahwa sistem ini belum sepenuhnya mampu menangkap preferensi personal secara mendalam.
 
-Adapun pendekatan Model-Based Collaborative Filtering menunjukkan performa paling optimal. Nilai RMSE yang rendah dan kurva pelatihan yang stabil mengindikasikan bahwa model ini dapat secara efektif mengenali dan memetakan pola interaksi pengguna terhadap buku.
+- User-Based Collaborative Filtering menawarkan rekomendasi yang lebih sesuai dengan referensi pengguna lain yang serupa, meskipun performanya menurun ketika diterapkan pada pengguna baru atau yang belum aktif.
+
+- Pendekatan Model-Based Collaborative Filtering menunjukkan performa paling optimal. Nilai RMSE yang rendah dan kurva pelatihan yang stabil mengindikasikan bahwa model ini dapat secara efektif mengenali dan memetakan pola interaksi pengguna terhadap buku.
 
 Secara keseluruhan, kombinasi dari ketiga pendekatan ini telah berhasil memberikan solusi yang relevan terhadap permasalahan yang ada dan mendukung pencapaian target bisnis secara menyeluruh.
