@@ -180,20 +180,21 @@ Tidak ditemukan data duplikat, sehingga tidak diperlukan tindakan pembersihan un
 
 ## Exploratory Data Analysis (EDA)
 
-**10 Buku dengan Rating Terbanyak**
+Berikut adalah tabel yang merangkum 10 buku dengan jumlah rating terbanyak di dataset:
 
-Berikut 10 buku dengan jumlah rating terbanyak di dataset:
-ISBN Book-Title Jumlah Rating
-0 0971880107 Wild Animus 2502
-1 0316666343 The Lovely Bones: A Novel 1295
-2 0385504209 The Da Vinci Code 883
-3 0060928336 Divine Secrets of the Ya-Ya Sisterhood: A Novel 732
-4 0312195516 The Red Tent (Bestselling Backlist) 723
-5 044023722X A Painted House 647
-6 0679781587 NaN 639
-7 0142001740 The Secret Life of Bees 615
-8 067976402X Snow Falling on Cedars 614
-9 0671027360 Angels &amp; Demons 586
+| No | ISBN       | Judul Buku                                        | Jumlah Rating |
+| -- | ---------- | ------------------------------------------------- | ------------- |
+| 1  | 0971880107 | *Wild Animus*                                     | 2502          |
+| 2  | 0316666343 | *The Lovely Bones: A Novel*                       | 1295          |
+| 3  | 0385504209 | *The Da Vinci Code*                               | 883           |
+| 4  | 0060928336 | *Divine Secrets of the Ya-Ya Sisterhood: A Novel* | 732           |
+| 5  | 0312195516 | *The Red Tent (Bestselling Backlist)*             | 723           |
+| 6  | 044023722X | *A Painted House*                                 | 647           |
+| 7  | 0679781587 | *Tidak tersedia (missing title)*                  | 639           |
+| 8  | 0142001740 | *The Secret Life of Bees*                         | 615           |
+| 9  | 067976402X | *Snow Falling on Cedars*                          | 614           |
+| 10 | 0671027360 | *Angels & Demons*                                 | 586           |
+
 
 **Insight**:
 
