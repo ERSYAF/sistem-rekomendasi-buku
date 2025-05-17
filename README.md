@@ -518,7 +518,6 @@ Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berd
 - Matriks *cosine similarity* antar pengguna memiliki dimensi *(20.908, 20.908)*.
 - Artinya, kemiripan dihitung antar *20.908 pengguna* dengan membandingkan setiap pasangan pengguna satu sama lain.
 
----
 
 #### 4. Rekomendasi Berdasarkan Judul Buku
 ---
