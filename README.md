@@ -466,7 +466,6 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
   - Semakin tinggi nilainya, semakin penting kata tersebut dalam konteks judul tertentu.
   - Nilai dihitung berdasarkan frekuensi kata dalam judul dan seberapa jarang kata tersebut muncul di keseluruhan koleksi.
 
----
 
 #### 2. Menghitung *Cosine Similarity* Antar Judul Buku
 
@@ -495,7 +494,6 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 - Matriks *cosine similarity* yang diperoleh memiliki dimensi *(24.253, 24.253)*.
 - Ini menunjukkan bahwa sebanyak *24.253 judul buku* dibandingkan satu sama lain untuk mengukur tingkat kemiripan berdasarkan judul.
 
----
 
 #### 3. Menghitung *Cosine Similarity* Antar Pengguna
 
@@ -520,7 +518,7 @@ Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berd
 
 ---
 
-#### 3. Rekomendasi Berdasarkan Judul Buku
+#### 4. Rekomendasi Berdasarkan Judul Buku
 
 Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan *Top-N* buku yang memiliki kemiripan tinggi berdasarkan judul buku.
 
