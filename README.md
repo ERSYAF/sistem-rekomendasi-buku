@@ -352,7 +352,7 @@ Metode yang digunakan:
 **Hasil**:
 - Setiap `user_id` dan `isbn` berhasil dipetakan ke nilai integer unik.
 - Contoh mapping:
-- 
+  
 | user_id | isbn       | book_rating | user | book |
 |---------|------------|-------------|------|------|
 | 276747  | 0060517794 | 9           | 0    | 0    |
