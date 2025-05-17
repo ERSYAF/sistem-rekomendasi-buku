@@ -69,6 +69,8 @@ Bagian ini menjelaskan proses identifikasi masalah yang menjadi dasar pengembang
   Kelebihan: Skalabilitas tinggi dan mampu menangkap pola kompleks.
   Kekurangan: Memerlukan data dalam jumlah besar dan waktu pelatihan lebih lama dibanding metode lain.
 
+---
+
 # Data Understanding
 
 Pada bagian ini, kami menjelaskan jumlah data, kondisi data, dan informasi mengenai dataset yang digunakan. Dataset yang digunakan dalam proyek ini adalah [Book Recommendation Dataset - Kaggle](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset).
@@ -234,7 +236,6 @@ Visualisasi data menunjukkan bahwa sebagian besar pengguna berada dalam rentang 
 Pada bagian ini, kami menerapkan dan menyebutkan teknik data preparation yang dilakukan.
 Teknik yang digunakan pada notebook dan laporan disusun secara berurutan sesuai proses.
 
----
 
 ### Penanganan Nilai Hilang pada Kolom Age
 
@@ -246,7 +247,6 @@ Setelah pemeriksaan, ditemukan sekitar 110.762 data pengguna tidak memiliki nila
 
 **Hasil**: Awalnya, dataset Users memiliki 278.858 baris data. Setelah proses penghapusan baris yang memiliki nilai kosong pada kolom Age, jumlah data berkurang menjadi 168.096 entri dengan 3 kolom.
 
----
 
 ### Penanganan Outlier pada Kolom Age
 
@@ -258,7 +258,6 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Setelah menghapus nilai kosong di kolom Age, dataset Users memiliki 168.096 entri. Setelah proses pembersihan outlier dengan menyaring usia antara 5 hingga 100 tahun, jumlah data berkurang menjadi 166.848 entri dengan 3 kolom.
 
----
 
 ### Penyaringan (Filtering) Data Ratings
 
@@ -270,7 +269,6 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Dataset Ratings awalnya memiliki 1.149.780 entri. Setelah menghapus data dengan nilai rating 0, jumlah entri berkurang menjadi 433.671 entri dengan 3 kolom.
 
----
 
 ### Filtering Pengguna (users) dan Buku Berdasarkan Aktivitas Minimum
 
@@ -285,7 +283,6 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Setelah menghapus rating dengan nilai 0, dataset Ratings memiliki 433.671 entri. Setelah dilakukan filtering untuk mempertahankan pengguna dan buku yang memiliki minimal 3 rating, jumlah entri berkurang menjadi 203.851 dengan 3 kolom.
 
----
 
 ### Konversi Kolom Menjadi List
 
@@ -295,7 +292,6 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 **Proses dan Alasan**:
 - Kolom yang dikonversi meliputi: User-ID menjadi list user_id, ISBN menjadi list isbn, Book-Rating menjadi list book_rating
 
----
 
 ### Membuat DataFrame Bersih untuk Modeling
 
@@ -307,7 +303,6 @@ Pembuatan DataFrame ini bertujuan untuk memudahkan proses pemodelan sistem rekom
 
 **Hasil**: DataFrame ratings_clean yang dibuat memiliki 203.851 baris dan 3 kolom.
 
----
 
 ### Membuat Matriks User-Item untuk Collaborative Filtering
 
@@ -325,7 +320,6 @@ Metode yang digunakan:
 **Hasil**:
 - Matriks User-Item yang terbentuk memiliki ukuran (20.908, 25.790).
 - Terdapat banyak nilai missing (NaN) karena sebagian besar pengguna hanya memberikan rating pada sebagian kecil dari total buku yang tersedia.
----
 
 ### Membuat Daftar User-ID dan ISBN Unik
 
@@ -338,7 +332,6 @@ Metode yang digunakan:
 **Hasil**:
 - Terdapat 20.908 User-ID unik dan 25.790 ISBN unik dalam dataset setelah pembersihan.
 
----
 
 ### Encoding User-ID dan ISBN ke Bentuk Integer dan Memetakan (Mapping) User dan ISBN yang Telah Di-encode ke DataFrame
 
@@ -361,7 +354,6 @@ Metode yang digunakan:
 | 276762  | 0380711524 | 5           | 1    | 3    |
 | 276772  | 0553572369 | 7           | 2    | 4    |
 
----
 
 ### Konversi Nilai Rating ke Tipe Data float32
 
@@ -374,7 +366,6 @@ Metode yang digunakan:
 **Hasil**:
 - Kolom `book_rating` pada dataset `ratings_clean` berhasil dikonversi ke format `float32`.
 
----
 
 ### Check Jumlah User dan Buku Setelah Encoding
 
@@ -448,15 +439,12 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 4. **Fit dan Transform**  
    `TF-IDF Vectorizer` di-fit dan diterapkan (`transform`) pada kolom `Book-Title`.
 
----
 
 #### Hasil TF-IDF Matrix
 
 - **Ukuran Matrix:** (24.253, 16.052)  
   - 24.253 baris: jumlah judul buku yang dianalisis  
   - 16.052 kolom: jumlah kata unik (fitur) dari semua judul buku setelah stopwords dihapus
-
----
 
 #### Makna Matrix
 
@@ -465,6 +453,8 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 - Nilai pada matrix menunjukkan seberapa penting kata tersebut bagi suatu judul:
   - Semakin tinggi nilainya, semakin penting kata tersebut dalam konteks judul tertentu.
   - Nilai dihitung berdasarkan frekuensi kata dalam judul dan seberapa jarang kata tersebut muncul di keseluruhan koleksi.
+
+---
 
 #### 2. Menghitung *Cosine Similarity* Antar Judul Buku
 
@@ -480,8 +470,6 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
   - *1.0* → sangat mirip  
   - *0.0* → tidak mirip sama sekali
 
----
-
 **Proses**
 
 - Menggunakan fungsi `cosine_similarity` dari *sklearn.metrics.pairwise*
@@ -490,8 +478,6 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 
   - Baris ke-*i* dan kolom ke-*j* merepresentasikan tingkat kemiripan antara buku ke-*i* dan buku ke-*j* berdasarkan judul.
 
----
-
 **Hasil**
 
 - Matriks *cosine similarity* yang diperoleh memiliki dimensi *(24.253, 24.253)*.
@@ -499,9 +485,8 @@ Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut
 
 ---
 
-#### Menghitung *Cosine Similarity* Antar Pengguna
+#### 3. Menghitung *Cosine Similarity* Antar Pengguna
 
----
 
 **Proses Perhitungan Kemiripan Antar Pengguna**
 
@@ -516,18 +501,17 @@ Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berd
   2. Nilai *missing* (`NaN`) pada *User-Item Matrix* diisi dengan angka *0*.
   3. Hitung kemiripan untuk setiap pasangan pengguna dalam dataset.
 
----
-
 **Hasil**
 
 - Matriks *cosine similarity* antar pengguna memiliki dimensi *(20.908, 20.908)*.
 - Artinya, kemiripan dihitung antar *20.908 pengguna* dengan membandingkan setiap pasangan pengguna satu sama lain.
 
+---
+
 #### 3. Rekomendasi Berdasarkan Judul Buku
 
 Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan *Top-N* buku yang memiliki kemiripan tinggi berdasarkan judul buku.
 
----
 
 **Langkah-langkah yang Diterapkan**:
 
@@ -536,7 +520,6 @@ Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menya
 3. Mengurutkan skor kemiripan dan memilih *Top-N* buku dengan nilai tertinggi.
 4. Fungsi ini bertujuan memberikan rekomendasi buku yang serupa dengan preferensi pengguna terhadap sebuah buku tertentu.
 
----
 
 **Contoh Output: Rekomendasi Top-5 Buku**  
 *(Menggunakan Content-Based Filtering)*
@@ -559,26 +542,23 @@ Sistem kemudian mencari 5 buku dengan tingkat kemiripan tertinggi berdasarkan an
 | 4   | Harry Potter and the Chamber of Secrets Postcard Book     | J. K. Rowling |
 | 5   | Harry Potter and the Chamber of Secrets (Book 2 Audio CD) | J. K. Rowling |
 
----
 
 **Interpretasi Hasil**:
 
 Seluruh buku yang direkomendasikan merupakan variasi dari *"Harry Potter and the Chamber of Secrets"*, seperti edisi berbeda atau format yang beragam (buku cetak, audio CD, kartu pos).  
 Hal ini menunjukkan bahwa metode *Content-Based Filtering* yang menggunakan kemiripan judul cukup efektif dalam menangkap kesamaan isi atau tema antar buku.
 
+---
+
 ### Model Development dengan Collaborative Filtering
 
 Pada tahap ini, kami mengembangkan fungsi rekomendasi yang memberikan saran buku kepada pengguna berdasarkan kesamaan preferensi dengan pengguna lain.
-
----
 
 **Metode yang Digunakan:**
 
 - **User-Based Collaborative Filtering**  
   Sistem mencari pengguna lain yang memiliki pola pemberian rating buku yang mirip dengan pengguna target menggunakan *cosine similarity*.
   Buku-buku yang mendapat rating tinggi dari pengguna serupa, namun belum pernah dinilai oleh pengguna target, akan direkomendasikan.
-
----
 
 **Langkah-langkah Fungsi:**
 
@@ -647,7 +627,6 @@ Kami mengembangkan model deep learning kustom menggunakan TensorFlow/Keras denga
 
 Model ini dirancang untuk secara efisien mempelajari pola interaksi antara pengguna dan item melalui embedding yang terlatih.
 
----
 
 #### Proses Model:
 
@@ -677,8 +656,6 @@ Pengaturan pelatihan meliputi:
 
 Konfigurasi ini bertujuan untuk mengoptimalkan performa model dalam mempelajari pola interaksi antara pengguna dan buku secara efektif.
 
----
-
 #### Hasil Output:
 
 - **Nilai RMSE terbaik pada data training:** sekitar 0.1517  
@@ -686,32 +663,28 @@ Konfigurasi ini bertujuan untuk mengoptimalkan performa model dalam mempelajari 
 - Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.  
 - Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
 
----
 
 #### Contoh Rekomendasi:
-
-**Simulasi Rekomendasi Model-Based Collaborative Filtering (Keras)**
-
-Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 263663.
+Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 278188.
 
 Proses:
 
-- Model menerima input berupa ID user dan seluruh daftar buku (ISBN).  
-- Model memprediksi skor kecocokan atau preferensi user terhadap setiap buku dalam skala \[0,1\].  
-- Berdasarkan skor prediksi, sistem memilih buku dengan skor tertinggi yang belum pernah dirating oleh user tersebut.  
-- Hasil rekomendasi berupa daftar buku yang diprediksi paling sesuai dengan minat dan preferensi user tersebut.
+* Model menerima input berupa ID user dan seluruh daftar buku (ISBN).
+* Model memprediksi skor kecocokan atau preferensi user terhadap setiap buku dalam skala $0,1$.
+* Berdasarkan skor prediksi, sistem memilih buku dengan skor tertinggi yang belum pernah dirating oleh user tersebut.
+* Hasil rekomendasi berupa daftar buku yang diprediksi paling sesuai dengan minat dan preferensi user tersebut.
 
-| No  | Book-Title                                             | Book-Author      |
-| :-- | :----------------------------------------------------- | :--------------- |
-| 1   | The Return of the King (The Lord of the Rings, Part 3) | J.R.R. Tolkien   |
-| 2   | The Two Towers (The Lord of the Rings, Part 2)         | J.R.R. Tolkien   |
-| 3   | The Giving Tree                                        | Shel Silverstein |
-| 4   | Dilbert: A Book of Postcards                           | Scott Adams      |
-| 5   | Harry Potter and the Chamber of Secrets Postcard Book  | J.K. Rowling     |
+| No | Book-Title                                             | Book-Author      |
+| :- | :----------------------------------------------------- | :--------------- |
+| 1  | The Return of the King (The Lord of the Rings, Part 3) | J.R.R. Tolkien   |
+| 2  | The Giving Tree                                        | Shel Silverstein |
+| 3  | My Sister's Keeper : A Novel (Picoult, Jodi)           | Jodi Picoult     |
+| 4  | Dilbert: A Book of Postcards                           | Scott Adams      |
+| 5  | Harry Potter and the Chamber of Secrets Postcard Book  | J.K. Rowling     |
 
 **Interpretasi Hasil:**
 
-Model menunjukkan kemampuan dalam memberikan rekomendasi buku yang populer dan sesuai dengan minat pengguna. Preferensi pengguna terhadap genre tertentu, seperti fantasy dan literature classic, tampak konsisten dalam hasil rekomendasi. Hal ini mengindikasikan bahwa model berbasis embedding berhasil mengenali dan mempelajari representasi laten dari hubungan antara pengguna dan buku yang mereka sukai.
+Model berhasil memberikan rekomendasi buku yang populer dan relevan dengan preferensi pengguna tersebut. Buku-buku yang direkomendasikan, seperti *The Return of the King* dan *Harry Potter and the Chamber of Secrets*, menunjukkan kecenderungan minat pengguna terhadap genre fantasy dan literature klasik. Selain itu, rekomendasi buku seperti *The Giving Tree* dan *Dilbert: A Book of Postcards* juga mencerminkan variasi genre yang luas, menandakan bahwa model mampu menangkap preferensi pengguna yang beragam.
 
 ---
 
@@ -738,9 +711,7 @@ Dengan mengombinasikan ketiga pendekatan ini, sistem rekomendasi dapat menjadi l
 
 Pada bagian ini, kami mengevaluasi kinerja sistem rekomendasi yang telah dibangun menggunakan dua pendekatan: Content-Based Filtering dan Collaborative Filtering (baik Memory-Based maupun Model-Based).
 
----
-
-## Visualisasi Learning Curve
+## Visualisasi Learning Curve 
 
 Grafik berikut memperlihatkan tren perubahan nilai Root Mean Squared Error (RMSE) pada data pelatihan dan validasi sepanjang proses pelatihan model.
 
@@ -761,7 +732,6 @@ Untuk menilai kinerja model Collaborative Filtering yang dibangun menggunakan Te
 - RMSE memberikan informasi yang jelas mengenai besarnya kesalahan prediksi dalam satuan rating.  
 - Nilai RMSE yang lebih kecil mengindikasikan model yang lebih akurat.
 
----
 
 ## Hasil Evaluasi Model
 
