@@ -236,8 +236,9 @@ Visualisasi data menunjukkan bahwa sebagian besar pengguna berada dalam rentang 
 Pada bagian ini, kami menerapkan dan menyebutkan teknik data preparation yang dilakukan.
 Teknik yang digunakan pada notebook dan laporan disusun secara berurutan sesuai proses.
 
+---
 
-### Penanganan Nilai Hilang pada Kolom Age
+### 1. Penanganan Nilai Hilang pada Kolom Age
 
 **Teknik yang digunakan**:
 - Menghilangkan missing value pada kolom Age dengan menggunakan fungsi dropna(subset=['Age']).
@@ -247,8 +248,9 @@ Setelah pemeriksaan, ditemukan sekitar 110.762 data pengguna tidak memiliki nila
 
 **Hasil**: Awalnya, dataset Users memiliki 278.858 baris data. Setelah proses penghapusan baris yang memiliki nilai kosong pada kolom Age, jumlah data berkurang menjadi 168.096 entri dengan 3 kolom.
 
+---
 
-### Penanganan Outlier pada Kolom Age
+### 2. Penanganan Outlier pada Kolom Age
 
 **Teknik yang digunakan**:
 - Memfilter data dengan kondisi usia >= 5 dan <= 100.
@@ -258,8 +260,9 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Setelah menghapus nilai kosong di kolom Age, dataset Users memiliki 168.096 entri. Setelah proses pembersihan outlier dengan menyaring usia antara 5 hingga 100 tahun, jumlah data berkurang menjadi 166.848 entri dengan 3 kolom.
 
+---
 
-### Penyaringan (Filtering) Data Ratings
+### 3.  Penyaringan (Filtering) Data Ratings
 
 **Teknik yang digunakan**:
 - Menghapus baris data dengan kondisi Book-Rating == 0 menggunakan teknik filtering.
@@ -269,8 +272,9 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Dataset Ratings awalnya memiliki 1.149.780 entri. Setelah menghapus data dengan nilai rating 0, jumlah entri berkurang menjadi 433.671 entri dengan 3 kolom.
 
+---
 
-### Filtering Pengguna (users) dan Buku Berdasarkan Aktivitas Minimum
+### 4. Filtering Pengguna (users) dan Buku Berdasarkan Aktivitas Minimum
 
 **Teknik yang digunakan**:
 - Penyaringan Pengguna: Mempertahankan hanya pengguna yang telah memberikan minimal 3 rating.
@@ -283,8 +287,9 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 
 **Hasil**: Setelah menghapus rating dengan nilai 0, dataset Ratings memiliki 433.671 entri. Setelah dilakukan filtering untuk mempertahankan pengguna dan buku yang memiliki minimal 3 rating, jumlah entri berkurang menjadi 203.851 dengan 3 kolom.
 
+---
 
-### Konversi Kolom Menjadi List
+### 5. Konversi Kolom Menjadi List
 
 **Teknik yang digunakan**:
 - Mengubah kolom-kolom utama dari dataset Ratings menjadi format list menggunakan fungsi .tolist()
@@ -292,8 +297,9 @@ Dari eksplorasi data awal, ditemukan beberapa usia yang tidak masuk akal, sepert
 **Proses dan Alasan**:
 - Kolom yang dikonversi meliputi: User-ID menjadi list user_id, ISBN menjadi list isbn, Book-Rating menjadi list book_rating
 
+---
 
-### Membuat DataFrame Bersih untuk Modeling
+### 6. Membuat DataFrame Bersih untuk Modeling
 
 **Teknik yang digunakan**:
 - Membuat sebuah DataFrame baru bernama ratings_clean yang berisi tiga kolom utama hasil dari konversi list: user_id : ID pengguna, isbn : ISBN buku, book_rating : Nilai rating yang diberikan pengguna pada buku
@@ -303,8 +309,9 @@ Pembuatan DataFrame ini bertujuan untuk memudahkan proses pemodelan sistem rekom
 
 **Hasil**: DataFrame ratings_clean yang dibuat memiliki 203.851 baris dan 3 kolom.
 
+---
 
-### Membuat Matriks User-Item untuk Collaborative Filtering
+### 7. Membuat Matriks User-Item untuk Collaborative Filtering
 
 **Teknik yang digunakan**:
 - Pada tahap ini, kami menyusun User-Item Matrix dari dataset ratings_clean.
@@ -321,7 +328,9 @@ Metode yang digunakan:
 - Matriks User-Item yang terbentuk memiliki ukuran (20.908, 25.790).
 - Terdapat banyak nilai missing (NaN) karena sebagian besar pengguna hanya memberikan rating pada sebagian kecil dari total buku yang tersedia.
 
-### Membuat Daftar User-ID dan ISBN Unik
+---
+
+### 8. Membuat Daftar User-ID dan ISBN Unik
 
 **Teknik yang digunakan**:
 - Mengambil semua nilai unik dari `user_id` dan `isbn` di `ratings_clean` menggunakan `.unique()` dan mengubahnya ke list.
@@ -332,8 +341,9 @@ Metode yang digunakan:
 **Hasil**:
 - Terdapat 20.908 User-ID unik dan 25.790 ISBN unik dalam dataset setelah pembersihan.
 
+---
 
-### Encoding User-ID dan ISBN ke Bentuk Integer dan Memetakan (Mapping) User dan ISBN yang Telah Di-encode ke DataFrame
+### 9. Encoding User-ID dan ISBN ke Bentuk Integer dan Memetakan (Mapping) User dan ISBN yang Telah Di-encode ke DataFrame
 
 **Teknik yang digunakan**:
 - Menggunakan `LabelEncoder` untuk mengubah `user_id` dan `isbn` dari string menjadi angka integer.
@@ -354,8 +364,9 @@ Metode yang digunakan:
 | 276762  | 0380711524 | 5           | 1    | 3    |
 | 276772  | 0553572369 | 7           | 2    | 4    |
 
+---
 
-### Konversi Nilai Rating ke Tipe Data float32
+### 10. Konversi Nilai Rating ke Tipe Data float32
 
 **Teknik yang digunakan**:
 - Menggunakan `.astype('float32')` untuk mengubah nilai `book_rating`.
@@ -366,8 +377,9 @@ Metode yang digunakan:
 **Hasil**:
 - Kolom `book_rating` pada dataset `ratings_clean` berhasil dikonversi ke format `float32`.
 
+---
 
-### Check Jumlah User dan Buku Setelah Encoding
+### 11. Check Jumlah User dan Buku Setelah Encoding
 
 **Teknik yang digunakan**:
 - Menggunakan fungsi `nunique()` untuk menghitung jumlah user dan buku unik setelah encoding.
@@ -380,7 +392,7 @@ Metode yang digunakan:
 
 ---
 
-### Membagi (Split) Dataset untuk Pelatihan dan Validasi
+### 12. Membagi (Split) Dataset untuk Pelatihan dan Validasi
 
 **Teknik yang digunakan**:
 - Menggunakan `train_test_split` dengan rasio 80:20.
