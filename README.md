@@ -195,6 +195,9 @@ Berikut adalah tabel yang merangkum 10 buku dengan jumlah rating terbanyak di da
 | 9  | 067976402X | *Snow Falling on Cedars*                          | 614           |
 | 10 | 0671027360 | *Angels & Demons*                                 | 586           |
 
+Berikut Visualisasi 10 Buku Rating Terbanyak
+![10 Buku Rating Terbanyak](gambar/Buku%20Rating%20Terbanyak.png)
+
 
 **Insight**:
 
