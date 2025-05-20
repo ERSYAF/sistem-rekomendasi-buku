@@ -394,7 +394,39 @@ Metode yang digunakan:
 
 ---
 
-### 12. Membagi (Split) Dataset untuk Pelatihan dan Validasi
+### 12. Membuat TF-IDF Matrix dari Judul Buku
+
+**1. Filtering ISBN Buku:**
+Dataset `books` difilter agar hanya menyertakan ISBN yang terdapat dalam `ratings_clean`.
+* Tujuan: Menyelaraskan data buku dengan buku-buku yang telah dirating secara aktif.
+
+**2. Menangani Missing Value:**
+Kolom `Book-Title` yang kosong diisi dengan string kosong (`''`) untuk mencegah error saat proses vektorisasi teks.
+* Teknik: `fillna('')`
+
+**3. TF-IDF Vectorization:**
+Digunakan **`TfidfVectorizer`** dari `scikit-learn` dengan parameter `stop_words='english'`.
+* Tujuan: Mengubah teks judul buku menjadi representasi numerik berdasarkan pentingnya kata (frekuensi term invers dokumen).
+
+**4. Fit dan Transform:**
+TF-IDF Vectorizer di-*fit* dan diterapkan (`transform`) pada kolom `Book-Title`.
+* Hasil: TF-IDF Matrix yang merepresentasikan setiap judul buku dalam bentuk vektor.
+
+**Hasil:**
+
+* **Ukuran Matrix:** `(24.253, 16.052)`
+
+  * **24.253** baris = jumlah judul buku yang dianalisis.
+  * **16.052** kolom = jumlah kata unik (fitur) dari semua judul buku setelah stopwords dihapus.
+* **Makna Matrix:**
+
+  * Setiap baris merepresentasikan **sebuah buku** dalam bentuk vektor fitur.
+  * Setiap kolom merepresentasikan **kata unik** yang digunakan dalam judul-judul buku.
+  * Nilai pada matrix menunjukkan **seberapa penting** kata tersebut bagi suatu judul (berdasarkan frekuensi term dan seberapa umum kata tersebut dalam seluruh koleksi judul).
+
+---
+
+### 13. Membagi (Split) Dataset untuk Pelatihan dan Validasi
 
 **Teknik yang digunakan**:
 - Menggunakan `train_test_split` dengan rasio 80:20.
@@ -434,104 +466,100 @@ Pendekatan ini merekomendasikan buku berdasarkan kemiripan konten, khususnya pad
 
 ---
 
-#### 1. Membuat TF-IDF Matrix dari Judul Buku
+### 1. Cosine Similarity Antar Judul Buku
 
-Pada tahap ini, fitur konten dari buku disiapkan melalui langkah-langkah berikut:
-
-1. **Filtering ISBN Buku**  
-   Dataset `books` difilter agar hanya menyertakan ISBN yang terdapat dalam `ratings_clean`.  
-   Tujuan: Menyelaraskan data buku dengan buku-buku yang telah dirating secara aktif.
-
-2. **Menangani Missing Value**  
-   Kolom `Book-Title` yang kosong diisi dengan string kosong (`''`).  
-   Teknik: `fillna('')`
-
-3. **TF-IDF Vectorization**  
-   Menggunakan `TfidfVectorizer` dari `scikit-learn` dengan parameter `stop_words='english'`.  
-   Tujuan: Mengubah teks judul buku menjadi representasi numerik berdasarkan pentingnya kata (frekuensi term-inverse document).
-
-4. **Fit dan Transform**  
-   `TF-IDF Vectorizer` di-fit dan diterapkan (`transform`) pada kolom `Book-Title`.
-
-
-#### Hasil TF-IDF Matrix
-
-- **Ukuran Matrix:** (24.253, 16.052)  
-  - 24.253 baris: jumlah judul buku yang dianalisis  
-  - 16.052 kolom: jumlah kata unik (fitur) dari semua judul buku setelah stopwords dihapus
-
-#### Makna Matrix
-
-- Setiap baris merepresentasikan sebuah buku dalam bentuk vektor fitur.
-- Setiap kolom merepresentasikan kata unik yang digunakan dalam judul-judul buku.
-- Nilai pada matrix menunjukkan seberapa penting kata tersebut bagi suatu judul:
-  - Semakin tinggi nilainya, semakin penting kata tersebut dalam konteks judul tertentu.
-  - Nilai dihitung berdasarkan frekuensi kata dalam judul dan seberapa jarang kata tersebut muncul di keseluruhan koleksi.
-
-
-#### 2. Menghitung *Cosine Similarity* Antar Judul Buku
+Setelah representasi teks judul buku dikonversi ke bentuk vektor melalui proses **TF-IDF**, langkah selanjutnya adalah menghitung **kemiripan antar judul buku**. Dalam penelitian ini, digunakan teknik **Cosine Similarity** untuk mengukur sejauh mana dua judul buku memiliki kemiripan makna berdasarkan distribusi kata-kata dalam vektor TF-IDF.
 
 ---
 
-**Teknik yang Digunakan**
+#### Teknik yang Digunakan: Cosine Similarity
 
-- *Cosine Similarity*:  
-  Mengukur sudut antara dua vektor TF-IDF.  
-  Semakin kecil sudutnya (*semakin paralel vektornya*), maka semakin mirip kedua judul buku.
+**Cosine Similarity** merupakan metode populer untuk mengukur kemiripan antara dua vektor dalam ruang berdimensi tinggi. Alih-alih menggunakan jarak Euclidean, Cosine Similarity menghitung **nilai cosinus dari sudut** antara dua vektor.
 
-- *Nilai Cosine Similarity*:  
-  - *1.0* → sangat mirip  
-  - *0.0* → tidak mirip sama sekali
+* **Interpretasi Nilai Cosine Similarity**:
 
-**Proses**
+  * **1.0** → Vektor sejajar sempurna (judul buku sangat mirip atau identik secara teks).
+  * **0.0** → Vektor saling tegak lurus (tidak ada kesamaan sama sekali).
+  * Nilai antara 0 dan 1 menggambarkan derajat kemiripan relatif antar judul.
 
-- Menggunakan fungsi `cosine_similarity` dari *sklearn.metrics.pairwise*
-- *Input*: TF-IDF matrix berukuran *(24.253 × 16.052)*
-- *Output*: Matrix similarity *(24.253 × 24.253)*
+* **Mengapa Cosine Similarity?**
+  Karena Cosine Similarity tidak dipengaruhi oleh panjang vektor (frekuensi absolut), tetapi hanya memperhatikan **arah vektor**, sehingga cocok untuk analisis teks yang menggunakan representasi seperti TF-IDF.
 
-  - Baris ke-*i* dan kolom ke-*j* merepresentasikan tingkat kemiripan antara buku ke-*i* dan buku ke-*j* berdasarkan judul.
-
-**Hasil**
-
-- Matriks *cosine similarity* yang diperoleh memiliki dimensi *(24.253, 24.253)*.
-- Ini menunjukkan bahwa sebanyak *24.253 judul buku* dibandingkan satu sama lain untuk mengukur tingkat kemiripan berdasarkan judul.
-
-
-#### 3. Menghitung *Cosine Similarity* Antar Pengguna
 ---
 
-**Proses Perhitungan Kemiripan Antar Pengguna**
+#### Proses Perhitungan
 
-Pada tahap ini, dilakukan perhitungan skor kemiripan antar seluruh pengguna berdasarkan pola rating mereka terhadap buku.
+1. **Input**:
 
-- *Metode yang Digunakan*:  
-  *Cosine Similarity*, untuk mengukur tingkat kesamaan antar vektor pengguna pada *User-Item Matrix*.  
-  Skor berkisar antara *0 (tidak mirip)* hingga *1 (sangat mirip)*.
+   * Matriks TF-IDF hasil vektorisasi judul buku dengan dimensi `(24.253 x 16.052)`, di mana:
 
-- *Langkah-langkah*:
-  1. Gunakan fungsi `cosine_similarity` dari *scikit-learn*.
-  2. Nilai *missing* (`NaN`) pada *User-Item Matrix* diisi dengan angka *0*.
-  3. Hitung kemiripan untuk setiap pasangan pengguna dalam dataset.
+     * 24.253 = jumlah judul buku unik.
+     * 16.052 = jumlah kata unik yang digunakan sebagai fitur (setelah filtering dan stopword removal).
 
-**Hasil**
+2. **Fungsi yang Digunakan**:
 
-- Matriks *cosine similarity* antar pengguna memiliki dimensi *(20.908, 20.908)*.
-- Artinya, kemiripan dihitung antar *20.908 pengguna* dengan membandingkan setiap pasangan pengguna satu sama lain.
+   * `cosine_similarity` dari modul `sklearn.metrics.pairwise`.
 
+3. **Output**:
 
-#### 4. Rekomendasi Berdasarkan Judul Buku
+   * Sebuah **matriks similarity** berdimensi `(24.253 x 24.253)`, di mana setiap entri `[i][j]` menunjukkan skor kemiripan antara buku ke-*i* dan buku ke-*j* berdasarkan judulnya.
+
+**Hasil:**
+Matriks cosine similarity yang diperoleh memiliki dimensi (24.253, 24.253).
+Ini menunjukkan bahwa sebanyak 24.253 judul buku saling dibandingkan untuk menilai seberapa mirip masing-masing judul satu dengan yang lain.
+
+---
+### 2. Cosine Similarity Antar Pengguna
+
+Tahap ini bertujuan untuk mengukur sejauh mana dua pengguna memiliki preferensi yang serupa terhadap buku-buku yang mereka rating. Pendekatan ini umum digunakan dalam sistem rekomendasi **collaborative filtering berbasis user-based**, di mana pengguna akan direkomendasikan item berdasarkan kesamaan preferensinya dengan pengguna lain.
+
 ---
 
-Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan *Top-N* buku yang memiliki kemiripan tinggi berdasarkan judul buku.
+#### Teknik yang Digunakan: Cosine Similarity
 
+**Cosine Similarity** digunakan untuk menghitung **kemiripan antara dua vektor pengguna** dalam sebuah **User-Item Matrix**. Setiap baris pada matriks merepresentasikan seorang pengguna, dan setiap kolom merepresentasikan sebuah buku. Nilai pada sel matriks menunjukkan rating yang diberikan oleh pengguna terhadap buku tersebut.
 
-**Langkah-langkah yang Diterapkan**:
+* **Interpretasi Nilai Cosine Similarity**:
 
-1. Memanfaatkan matriks *Cosine Similarity* yang telah dihitung sebelumnya.
-2. Mencari indeks buku berdasarkan judul yang dijadikan input.
-3. Mengurutkan skor kemiripan dan memilih *Top-N* buku dengan nilai tertinggi.
-4. Fungsi ini bertujuan memberikan rekomendasi buku yang serupa dengan preferensi pengguna terhadap sebuah buku tertentu.
+  * **1.0** → Kedua pengguna memiliki pola rating yang sangat mirip.
+  * **0.0** → Kedua pengguna tidak memiliki kesamaan preferensi sama sekali.
+  * Nilai antara 0 dan 1 menunjukkan tingkat kemiripan secara bertahap.
 
+* **Mengapa Cosine Similarity?**
+  Cosine similarity tidak mempertimbangkan perbedaan skala (misalnya, pengguna yang cenderung memberi rating tinggi vs. rendah), tetapi lebih fokus pada **pola** rating relatif terhadap item yang sama, sehingga cocok digunakan untuk analisis perilaku pengguna.
+
+---
+
+#### Proses Perhitungan
+
+1. **Membangun User-Item Matrix**:
+
+   * Matriks dibuat dengan baris sebagai pengguna dan kolom sebagai buku.
+   * Nilai dalam matriks adalah rating yang diberikan oleh pengguna terhadap buku.
+   * **Missing values** (jika pengguna belum merating buku tertentu) diisi dengan **0**, karena 0 dianggap mewakili tidak adanya interaksi.
+
+2. **Fungsi yang Digunakan**:
+
+   * `cosine_similarity` dari `sklearn.metrics.pairwise` digunakan untuk menghitung kemiripan antara setiap pasangan pengguna.
+
+3. **Output**:
+
+   * Sebuah **matriks kemiripan pengguna** (misalnya ukuran `N x N`, di mana N adalah jumlah pengguna), dengan setiap entri `[i][j]` menunjukkan skor kemiripan antara pengguna ke-*i* dan ke-*j* berdasarkan pola rating mereka.
+
+**Hasil**: Matriks cosine similarity yang diperoleh memiliki dimensi (20.908, 20.908).
+Ini menunjukkan bahwa kemiripan dihitung antar 20.908 pengguna dengan membandingkan setiap pasangan pengguna satu sama lain.
+teks yang dimiringkan
+
+---
+### 3. Membuat Fungsi Rekomendasi Berdasarkan Judul Buku
+Pada tahap ini, kami mengembangkan fungsi rekomendasi yang bertujuan untuk menyajikan Top-N buku yang memiliki kemiripan tinggi berdasarkan judul buku.
+
+**Langkah-langkah yang diterapkan meliputi:**
+* Memanfaatkan matriks Cosine Similarity yang sudah tersedia.
+* Mencari indeks buku berdasarkan judul yang diinput.
+* Mengurutkan skor kemiripan dan memilih Top-N buku dengan nilai tertinggi.
+
+Fungsi ini bertujuan memberikan rekomendasi buku yang serupa sesuai dengan preferensi pengguna terhadap sebuah buku tertentu.
 
 **Contoh Output: Rekomendasi Top-5 Buku**  
 *(Menggunakan Content-Based Filtering)*
@@ -564,47 +592,63 @@ Hal ini menunjukkan bahwa metode *Content-Based Filtering* yang menggunakan kemi
 
 ### Model Development dengan Collaborative Filtering
 
-Pada tahap ini, kami mengembangkan fungsi rekomendasi yang memberikan saran buku kepada pengguna berdasarkan kesamaan preferensi dengan pengguna lain.
+### Pengembangan Fungsi Rekomendasi Berbasis Kemiripan Pengguna
 
-**Metode yang Digunakan:**
-
-- **User-Based Collaborative Filtering**  
-  Sistem mencari pengguna lain yang memiliki pola pemberian rating buku yang mirip dengan pengguna target menggunakan *cosine similarity*.
-  Buku-buku yang mendapat rating tinggi dari pengguna serupa, namun belum pernah dinilai oleh pengguna target, akan direkomendasikan.
-
-**Langkah-langkah Fungsi:**
-
-1. Menghitung skor kemiripan antara pengguna target dengan seluruh pengguna lain.
-2. Memilih 5 pengguna paling mirip selain pengguna itu sendiri.
-3. Menghitung rata-rata rating untuk buku-buku yang diberikan oleh pengguna-pengguna mirip tersebut.
-4. Menyaring buku yang belum pernah dirating oleh pengguna target.
-5. Memilih *Top-N* buku berdasarkan rata-rata rating tertinggi.
-6. Menggabungkan data ISBN buku dengan judul (*Book-Title*) dan pengarang (*Book-Author*).
-7. Menambahkan informasi rata-rata rating (*Average-Rating*) ke dalam hasil rekomendasi.
-
-**Tujuan:**  
-Menyediakan rekomendasi buku yang kemungkinan besar disukai oleh pengguna berdasarkan perilaku dan preferensi pengguna lain yang serupa.
+Pada tahap ini, dikembangkan sebuah fungsi rekomendasi yang bertujuan untuk memberikan saran buku secara personal kepada pengguna berdasarkan **kesamaan preferensi** dengan pengguna lain. Pendekatan ini dikenal sebagai **User-Based Collaborative Filtering (UBCF)**, di mana sistem belajar dari pola rating pengguna lain yang serupa untuk memprediksi preferensi pengguna target.
 
 ---
 
-#### 1. Membentuk User-Item Matrix
+#### Metode yang Digunakan: User-Based Collaborative Filtering
 
-- Matriks interaksi user-item dibentuk dalam bentuk pivot table.
-- Baris merepresentasikan `user_id`, kolom merepresentasikan `isbn`, dan nilai pada sel adalah `book_rating`.
-- **Ukuran Matriks:** **(20.908, 25.790)**
+**User-Based Collaborative Filtering** merupakan pendekatan dalam sistem rekomendasi yang menggunakan prinsip bahwa *"pengguna yang memiliki preferensi serupa di masa lalu kemungkinan besar akan menyukai item yang sama di masa depan."* Dalam konteks ini, kesamaan preferensi antar pengguna dihitung menggunakan **Cosine Similarity** berdasarkan data rating buku.
 
----
+* **Prinsip Dasar:**
 
-#### 2. Menghitung Cosine Similarity Antar User
-
-Untuk mengetahui tingkat kemiripan antar pengguna:
-
-- **Teknik:** Menggunakan `cosine_similarity` dari `sklearn` pada *User-Item Matrix* yang telah diisi nilai kosong (`NaN`) dengan angka 0.
-- **Hasil:** Matriks similarity antar user berukuran **(20.908, 20.908)**
+  * Cari pengguna lain yang mirip dengan pengguna target.
+  * Lihat buku-buku yang disukai oleh pengguna-pengguna tersebut.
+  * Rekomendasikan buku-buku tersebut kepada pengguna target, terutama yang belum pernah ia nilai sebelumnya.
 
 ---
 
-#### 3. Rekomendasi Berdasarkan User Similarity
+#### Langkah-Langkah Fungsi Rekomendasi
+
+1. **Menghitung Skor Kemiripan Pengguna:**
+
+   * Menggunakan **Cosine Similarity** untuk menghitung tingkat kemiripan antara pengguna target dan seluruh pengguna lainnya berdasarkan **User-Item Matrix**.
+
+2. **Memilih K-Nearest Neighbors:**
+
+   * Sistem memilih **5 pengguna paling mirip** (selain pengguna itu sendiri) dengan skor cosine tertinggi sebagai *neighborhood*.
+
+3. **Menghitung Rata-Rata Rating Buku:**
+
+   * Untuk setiap buku yang telah dirating oleh pengguna-pengguna serupa, sistem menghitung **rata-rata rating** sebagai prediksi minat terhadap buku tersebut.
+
+4. **Menyaring Buku Baru bagi Pengguna Target:**
+
+   * Sistem mengecek buku-buku yang belum pernah dirating oleh pengguna target agar hanya merekomendasikan buku baru baginya.
+
+5. **Memilih Top-N Rekomendasi:**
+
+   * Dari daftar buku yang telah disaring, sistem memilih sejumlah **Top-N buku dengan rata-rata rating tertinggi** sebagai hasil rekomendasi.
+
+6. **Menggabungkan Data Tambahan Buku:**
+
+   * Untuk memperkaya hasil rekomendasi, data buku digabungkan dengan metadata seperti **judul buku** (`Book-Title`) dan **penulis** (`Book-Author`) dari dataset `books`.
+
+7. **Menambahkan Nilai Rata-Rata Rating:**
+
+   * Disisipkan informasi tambahan berupa **rata-rata rating prediksi** untuk setiap buku, sehingga pengguna dapat mempertimbangkan seberapa tinggi tingkat kesukaan pengguna serupa terhadap buku tersebut.
+
+---
+
+#### Tujuan
+
+Fungsi ini bertujuan untuk memberikan rekomendasi buku yang **relevan dan personal** kepada pengguna berdasarkan perilaku pengguna lain yang memiliki pola preferensi serupa. Dengan pendekatan ini, sistem diharapkan dapat meningkatkan kepuasan pengguna dalam menemukan buku-buku yang menarik, meskipun pengguna tersebut belum memiliki banyak riwayat interaksi.
+
+---
+
+#### Rekomendasi Berdasarkan User Similarity
 
 **Contoh Input User:**
 
