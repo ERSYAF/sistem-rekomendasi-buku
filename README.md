@@ -668,14 +668,6 @@ Pengaturan pelatihan meliputi:
 
 Konfigurasi ini bertujuan untuk mengoptimalkan performa model dalam mempelajari pola interaksi antara pengguna dan buku secara efektif.
 
-#### Hasil Output:
-
-- **Nilai RMSE terbaik pada data training:** sekitar 0.1517  
-- **Nilai RMSE terbaik pada data validasi:** sekitar 0.1835  
-- Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.  
-- Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
-
-
 #### Contoh Rekomendasi:
 Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 278188.
 
@@ -751,6 +743,12 @@ Untuk menilai kinerja model Collaborative Filtering yang dibangun menggunakan Te
 | -------------- | ---------- |
 | Training Data  | ± 0.1517   |
 | Validation Data| ± 0.1835   |
+
+#### Hasil Output:
+- **Nilai RMSE terbaik pada data training:** sekitar 0.1517  
+- **Nilai RMSE terbaik pada data validasi:** sekitar 0.1835  
+- Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.  
+- Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
 
 **Interpretasi:**
 
