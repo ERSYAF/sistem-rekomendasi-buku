@@ -767,7 +767,7 @@ Pada bagian ini, kami mengevaluasi kinerja sistem rekomendasi yang telah dibangu
 
 Grafik berikut memperlihatkan tren perubahan nilai Root Mean Squared Error (RMSE) pada data pelatihan dan validasi sepanjang proses pelatihan model.
 
-![Learning Curve](gambar/Learning%20Curve%20-%20RMSE.png)
+![Learning Curve](gambar/foto%20visual.png)
 
 **Insight:**  
 Grafik pelatihan model menunjukkan penurunan bertahap pada nilai *Root Mean Squared Error (RMSE)* baik pada data pelatihan maupun data validasi sepanjang 15 epoch. RMSE pada data pelatihan menurun hingga mendekati angka **0.1511**, sementara RMSE pada data validasi stabil di kisaran **0.1835** hingga **0.1845**.
