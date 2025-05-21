@@ -713,7 +713,7 @@ Pengaturan pelatihan meliputi:
 Konfigurasi ini bertujuan untuk mengoptimalkan performa model dalam mempelajari pola interaksi antara pengguna dan buku secara efektif.
 
 #### Contoh Rekomendasi:
-Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 278188.
+Pada tahap ini, kami menguji performa model Collaborative Filtering yang telah dilatih dengan memberikan rekomendasi buku untuk pengguna tertentu, yaitu User-ID 95301.
 
 Proses:
 
@@ -725,14 +725,18 @@ Proses:
 | No | Book-Title                                             | Book-Author      |
 | :- | :----------------------------------------------------- | :--------------- |
 | 1  | The Return of the King (The Lord of the Rings, Part 3) | J.R.R. Tolkien   |
-| 2  | The Giving Tree                                        | Shel Silverstein |
-| 3  | My Sister's Keeper : A Novel (Picoult, Jodi)           | Jodi Picoult     |
+| 2  | The Two Towers (The Lord of the Rings, Part 2)         | J.R.R. Tolkien   |
+| 3  | The Giving Tree                                        | Shel Silverstein |
 | 4  | Dilbert: A Book of Postcards                           | Scott Adams      |
 | 5  | Harry Potter and the Chamber of Secrets Postcard Book  | J.K. Rowling     |
 
-**Interpretasi Hasil:**
 
-Model berhasil memberikan rekomendasi buku yang populer dan relevan dengan preferensi pengguna tersebut. Buku-buku yang direkomendasikan, seperti *The Return of the King* dan *Harry Potter and the Chamber of Secrets*, menunjukkan kecenderungan minat pengguna terhadap genre fantasy dan literature klasik. Selain itu, rekomendasi buku seperti *The Giving Tree* dan *Dilbert: A Book of Postcards* juga mencerminkan variasi genre yang luas, menandakan bahwa model mampu menangkap preferensi pengguna yang beragam.
+**Interpretasi Hasil:**
+Model rekomendasi berhasil mengidentifikasi preferensi pengguna dengan cukup baik. Berdasarkan hasil rekomendasi, pengguna ini tampaknya memiliki ketertarikan yang kuat terhadap genre **fantasi dan fiksi klasik**, sebagaimana terlihat dari munculnya buku *The Return of the King* dan *The Two Towers* karya **J.R.R. Tolkien**, serta *Harry Potter and the Chamber of Secrets* karya **J.K. Rowling**.
+
+Selain itu, keberadaan buku *The Giving Tree* dari **Shel Silverstein** menunjukkan bahwa pengguna juga menyukai **buku-buku bernuansa emosional atau bermakna dalam**, yang sering ditemukan dalam buku anak-anak dengan pesan moral yang kuat. Adapun *Dilbert: A Book of Postcards* dari **Scott Adams** mencerminkan minat pengguna terhadap **humor dan karya visual ringan**, yang biasanya disukai oleh pembaca yang ingin hiburan santai.
+
+Secara keseluruhan, model mampu memberikan rekomendasi yang tidak hanya relevan dengan **tema atau genre utama** yang disukai pengguna, tetapi juga menawarkan **variasi konten** yang bisa memperluas wawasan bacaan mereka.
 
 ---
 
@@ -766,7 +770,9 @@ Grafik berikut memperlihatkan tren perubahan nilai Root Mean Squared Error (RMSE
 ![Learning Curve](gambar/Learning%20Curve%20-%20RMSE.png)
 
 **Insight:**  
-RMSE pada data pelatihan secara bertahap menurun hingga mencapai nilai mendekati 0.1517, sementara RMSE pada data validasi relatif stabil di kisaran 0.1835. Tidak ditemukan tanda-tanda overfitting yang signifikan. Model menunjukkan konvergensi yang baik dalam rentang sekitar 10 hingga 15 epoch. Temuan ini mengindikasikan bahwa model cukup efektif dalam memahami pola interaksi antara pengguna dan buku, serta mampu menghasilkan prediksi dengan tingkat kesalahan yang relatif rendah.
+Grafik pelatihan model menunjukkan penurunan bertahap pada nilai *Root Mean Squared Error (RMSE)* baik pada data pelatihan maupun data validasi sepanjang 15 epoch. RMSE pada data pelatihan menurun hingga mendekati angka **0.1511**, sementara RMSE pada data validasi stabil di kisaran **0.1835** hingga **0.1845**.
+
+Model menunjukkan proses konvergensi yang baik dan stabil, terutama dalam 10–15 epoch pertama. Tidak ditemukan indikasi **overfitting yang signifikan**, karena perbedaan nilai RMSE antara pelatihan dan validasi relatif kecil. Hal ini menunjukkan bahwa model mampu belajar pola dari data dengan efektif dan tetap mempertahankan kemampuan generalisasi terhadap data baru.
 
 ---
 
@@ -785,20 +791,16 @@ Untuk menilai kinerja model Collaborative Filtering yang dibangun menggunakan Te
 
 | Dataset        | RMSE       |
 | -------------- | ---------- |
-| Training Data  | ± 0.1517   |
-| Validation Data| ± 0.1835   |
+| Training Data  | ± 0.1511   |
+| Validation Data| ± 0.1835 – 0.1845  |
 
 #### Hasil Output:
-- **Nilai RMSE terbaik pada data training:** sekitar 0.1517  
-- **Nilai RMSE terbaik pada data validasi:** sekitar 0.1835  
-- Kurva pembelajaran menunjukkan tren yang stabil tanpa tanda-tanda overfitting yang signifikan.  
-- Model mencapai performa optimal pada epoch ke-14 dan kemudian pelatihan dihentikan.
+- Nilai RMSE terbaik pada training tercapai pada **epoch ke-15** dengan nilai sekitar **0.1511**.
+- RMSE validasi menunjukkan nilai stabil sejak **epoch ke-10**, menandakan model telah mencapai kondisi optimal. 
+- Tidak ada fluktuasi besar pada kurva validasi, yang menandakan model tidak mengalami overfitting.
 
 **Interpretasi:**
-
-- Nilai RMSE pada data training dan validation relatif kecil, menunjukkan bahwa model memiliki kemampuan prediksi yang cukup akurat.  
-- Selisih antara RMSE training dan validation yang tidak terlalu besar menandakan tidak adanya gejala overfitting yang signifikan.  
-- Model menunjukkan proses pembelajaran yang stabil dan mampu menggeneralisasi dengan baik terhadap data baru.
+Model berhasil melakukan pembelajaran secara efektif dan stabil. Nilai RMSE yang rendah baik pada data training maupun validasi menunjukkan bahwa model memiliki **akurasi prediksi yang baik** dalam mempelajari hubungan atau pola dari data pengguna dan item (misalnya, rating buku). Perbedaan yang kecil antara training dan validation error mengindikasikan bahwa model **tidak hanya hafal data training**, tetapi juga mampu **mengeneralisasi dengan baik** terhadap data yang belum pernah dilihat sebelumnya.
 
 ---
 
